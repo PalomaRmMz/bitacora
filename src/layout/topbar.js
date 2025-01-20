@@ -7,7 +7,7 @@ const Topbar = () => {
       data-bs-theme="dark"
     >
       <div className="container-fluid">
-        {/* Botón de menú para móviles */}
+        {/* móviles */}
         <button
           className="btn btn-outline-secondary d-lg-none me-2"
           type="button"
@@ -22,7 +22,7 @@ const Topbar = () => {
           Navbar
         </a>
 
-        {/* Menú colapsable estándar */}
+        {/* estándar */}
         <button
           className="navbar-toggler"
           type="button"

@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 const Sidebar = () => {
   return (
     <>
-      {/* Sidebar estático para pantallas grandes */}
+      {/* estático */}
       <div
         className="d-none d-lg-block position-fixed bottom-0 top-0 bg-dark z-2 sidebar"
         style={{ width: "250px" }}
@@ -28,7 +28,7 @@ const Sidebar = () => {
         </ul>
       </div>
 
-      {/* Sidebar offcanvas para pantallas móviles */}
+      {/* offcanvas */}
       <div
         className="offcanvas offcanvas-start bg-dark"
         tabIndex="-1"
