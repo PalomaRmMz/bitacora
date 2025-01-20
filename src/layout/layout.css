@@ -16,11 +16,10 @@
 
 .content {
     flex-grow: 1;
-    overflow-y: auto;
-    padding: 20px;
     margin-top: 60px;
     margin-left: 250px;
     transition: all 0.3s ease-in-out;
+    text-align: justify !important;
 }
 
 @media (max-width: 991.98px) {
