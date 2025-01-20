@@ -2,11 +2,27 @@ import React from "react";
 
 const Topbar = () => {
   return (
-    <nav className="topBar position-fixed top-0 navbar navbar-expand-lg bg-body-tertiary z-1">
+    <nav
+      className="topBar position-fixed top-0 navbar navbar-expand-lg bg-dark z-1"
+      data-bs-theme="dark"
+    >
       <div className="container-fluid">
+        {/* Botón de menú para móviles */}
+        <button
+          className="btn btn-outline-secondary d-lg-none me-2"
+          type="button"
+          data-bs-toggle="offcanvas"
+          data-bs-target="#mobileSidebar"
+          aria-controls="mobileSidebar"
+        >
+          ☰
+        </button>
+
         <a className="navbar-brand" href="#/">
           Navbar
         </a>
+
+        {/* Menú colapsable estándar */}
         <button
           className="navbar-toggler"
           type="button"
