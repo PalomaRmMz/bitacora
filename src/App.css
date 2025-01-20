@@ -1,0 +1,10 @@
+html {
+  min-height: 100%;
+  position: relative;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  text-align: justify;
+}
