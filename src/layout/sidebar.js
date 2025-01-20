@@ -4,16 +4,8 @@ import { Link } from "react-router-dom";
 const Sidebar = () => {
   return (
     <div
-      className="sidebar bg-dark fixed-left"
-      style={{
-        width: "250px",
-        height: "100vh",
-        position: "fixed",
-        top: 0,
-        left: 0,
-        paddingTop: "60px",
-        paddingRight: "10px",
-      }}
+      className="position-fixed bottom-0 z-2 top-0 sidebar"
+      style={{ width: "250px" }}
     >
       <ul className="nav flex-column">
         <li className="nav-item">

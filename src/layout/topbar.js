@@ -2,7 +2,7 @@ import React from "react";
 
 const Topbar = () => {
   return (
-    <nav className="navbar navbar-expand-lg bg-body-tertiary">
+    <nav className="topBar position-fixed top-0 navbar navbar-expand-lg bg-body-tertiary z-1">
       <div className="container-fluid">
         <a className="navbar-brand" href="#/">
           Navbar
