@@ -1,7 +1,7 @@
 import React from "react";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import Layout from "./layout/layout";
-import routesConfig from "./routesConfig";
+import routesConfig from "./routes";
 import "./App.css";
 
 const App = () => {

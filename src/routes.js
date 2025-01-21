@@ -1,5 +1,3 @@
-// src/routesConfig.js
-
 import Login from "./login/login";
 import Home from "./dashboard/home";
 
@@ -21,16 +19,19 @@ const routesConfig = [
     path: "/visitas/admin_visitas",
     element: <AdminVisitas />,
     label: "Administrar visitas",
+    breadcrumbParent: "Apartado visitas",
   },
   {
     path: "/visitas/add_visitas",
     element: <AddVisitas />,
     label: "Agregar visitas",
+    breadcrumbParent: "Apartado visitas",
   },
   {
     path: "/visitas/edit_visitas",
     element: <EditVisitas />,
     label: "Editar visitas",
+    breadcrumbParent: "Apartado visitas",
   },
 
   {
@@ -43,9 +44,20 @@ const routesConfig = [
     path: "/admin/admin_user",
     element: <AdminUser />,
     label: "Administrar usuarios",
+    breadcrumbParent: "Apartado usuarios",
   },
-  { path: "/admin/add_user", element: <AddUser />, label: "Agregar usuario" },
-  { path: "/admin/edit_user", element: <EditUser />, label: "Editar usuario" },
+  {
+    path: "/admin/add_user",
+    element: <AddUser />,
+    label: "Agregar usuario",
+    breadcrumbParent: "Apartado usuarios",
+  },
+  {
+    path: "/admin/edit_user",
+    element: <EditUser />,
+    label: "Editar usuario",
+    breadcrumbParent: "Apartado usuarios",
+  },
 ];
 
 export default routesConfig;
