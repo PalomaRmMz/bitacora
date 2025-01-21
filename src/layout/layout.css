@@ -1,6 +1,6 @@
-#sidebar .nav-link:hover {
-    background-color: #333;
-    transition: background-color 0.3s ease;
+:root {
+    --dark-color: #333;
+    --hover-color: #444;
 }
 
 .topBar {
@@ -8,6 +8,31 @@
     width: 100%;
     transition: all 0.3s ease-in-out;
 }
+
+#sidebar .nav-link:hover {
+    background-color: var(--dark-color);
+    transition: background-color 0.3s ease;
+}
+
+#sidebar .nav-link.active {
+    background-color: var(--dark-color) !important;
+    color: white;
+}
+
+#sidebar .nav-item {
+    list-style: none;
+}
+
+#sidebar .nav-item .nav-link {
+    cursor: pointer;
+    color: white;
+    transition: background-color 0.3s ease;
+}
+
+#sidebar .nav-item .nav-link:hover {
+    background-color: var(--hover-color);
+}
+
 
 @media (min-width: 992px) {
     .topBar {
