@@ -1,11 +1,53 @@
-import React from "react";
+import React, { useState } from "react";
 import { Link } from "react-router-dom";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {
+  faHome,
+  faInfoCircle,
+  faPhone,
+} from "@fortawesome/free-solid-svg-icons";
 
 const Sidebar = () => {
+  const [activeRoute, setActiveRoute] = useState("/home");
+
+  const routes = [
+    { path: "/home", label: "Home", icon: faHome },
+    { path: "/about", label: "About", icon: faInfoCircle },
+    { path: "/contact", label: "Contact", icon: faPhone },
+  ];
+
+  const handleClick = (path) => {
+    setActiveRoute(path);
+  };
+
+  const renderLinks = (isOffcanvas) => (
+    <ul className="nav flex-column">
+      {routes.map((route) => (
+        <li className="nav-item" key={route.path}>
+          <Link
+            className={`pt-3 pb-3 rounded nav-link ${
+              isOffcanvas ? "" : "text-white"
+            } ${activeRoute === route.path ? "active" : ""}`}
+            to={route.path}
+            onClick={() => handleClick(route.path)}
+            style={{
+              backgroundColor: activeRoute === route.path ? "#333" : "",
+              transition: "background-color 0.3s ease",
+            }}
+          >
+            <FontAwesomeIcon icon={route.icon} className="me-2" />
+            {route.label}
+          </Link>
+        </li>
+      ))}
+    </ul>
+  );
+
   return (
     <>
-      {/* estático */}
+      {/* Sidebar estático */}
       <div
+        id="sidebar"
         className="d-none d-lg-block position-fixed bottom-0 top-0 bg-dark z-2"
         style={{ width: "250px", height: "100vh" }}
       >
@@ -15,26 +57,10 @@ const Sidebar = () => {
         >
           <h5 className="text-white">HOLA</h5>
         </div>
-        <ul className="nav flex-column">
-          <li className="nav-item">
-            <Link className="nav-link" to="/home">
-              Home
-            </Link>
-          </li>
-          <li className="nav-item">
-            <Link className="nav-link" to="/about">
-              About
-            </Link>
-          </li>
-          <li className="nav-item">
-            <Link className="nav-link" to="/contact">
-              Contact
-            </Link>
-          </li>
-        </ul>
+        {renderLinks(false)}
       </div>
 
-      {/* offcanvas */}
+      {/* Offcanvas móvil */}
       <div
         className="offcanvas offcanvas-start bg-dark"
         tabIndex="-1"
@@ -55,25 +81,7 @@ const Sidebar = () => {
             ></button>
           </div>
         </div>
-        <div className="offcanvas-body">
-          <ul className="nav flex-column">
-            <li className="nav-item">
-              <Link className="nav-link" to="/home">
-                Home
-              </Link>
-            </li>
-            <li className="nav-item">
-              <Link className="nav-link" to="/about">
-                About
-              </Link>
-            </li>
-            <li className="nav-item">
-              <Link className="nav-link" to="/contact">
-                Contact
-              </Link>
-            </li>
-          </ul>
-        </div>
+        <div className="offcanvas-body">{renderLinks(true)}</div>
       </div>
     </>
   );
