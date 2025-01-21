@@ -10,10 +10,6 @@
     }
 }
 
-.sidebar {
-    height: calc(100vh - 60px);
-}
-
 .content {
     flex-grow: 1;
     margin-top: 60px;

@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import Login from "./login/login";
 import Home from "./dashboard/home";
 import Layout from "./layout/layout";
+import "./App.css";
 
 const routes = [
   { path: "/", element: <Login /> },

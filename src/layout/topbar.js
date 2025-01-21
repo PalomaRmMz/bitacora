@@ -1,15 +1,18 @@
 import React from "react";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faRightFromBracket } from "@fortawesome/free-solid-svg-icons";
+import avatar from "../assets/img/avatar.jpg";
 
 const Topbar = () => {
   return (
     <nav
-      className="topBar position-fixed top-0 navbar navbar-expand-lg bg-dark z-1"
-      data-bs-theme="dark"
+      className="navbar navbar-expand-lg bg-body-tertiary position-fixed top-0 w-100 z-1 border border-gray border-top-0 border-end-0 border-bottom-3 border-start-0"
+      style={{ height: "60px" }}
     >
-      <div className="container-fluid">
-        {/* móviles */}
+      <div className="container-fluid d-flex justify-content-between align-items-center">
+        {/* Botón para móviles */}
         <button
-          className="btn btn-outline-secondary d-lg-none me-2"
+          className="btn border-0 d-lg-none me-2"
           type="button"
           data-bs-toggle="offcanvas"
           data-bs-target="#mobileSidebar"
@@ -18,38 +21,44 @@ const Topbar = () => {
           ☰
         </button>
 
-        <a className="navbar-brand" href="#/">
-          Navbar
-        </a>
+        <div className="flex-grow-1"></div>
 
-        {/* estándar */}
-        <button
-          className="navbar-toggler"
-          type="button"
-          data-bs-toggle="collapse"
-          data-bs-target="#navbarNav"
-          aria-controls="navbarNav"
-          aria-expanded="false"
-          aria-label="Toggle navigation"
-        >
-          <span className="navbar-toggler-icon"></span>
-        </button>
-        <div className="collapse navbar-collapse" id="navbarNav">
-          <ul className="navbar-nav">
-            <li className="nav-item">
-              <a className="nav-link active" aria-current="page" href="#/">
-                Home
-              </a>
+        <div className="btn-group">
+          <button
+            type="button"
+            className="btn p-0 rounded-circle"
+            data-bs-toggle="dropdown"
+            aria-expanded="false"
+            style={{ width: "50px", height: "50px" }}
+          >
+            <img
+              src={avatar}
+              alt="Dropdown"
+              className="img-fluid p-0 m-0 rounded-circle"
+            />
+          </button>
+          <ul className="dropdown-menu dropdown-menu-end">
+            <li>
+              <button className="dropdown-item" type="button">
+                Action
+              </button>
             </li>
-            <li className="nav-item">
-              <a className="nav-link" href="#/">
-                Features
-              </a>
+            <li>
+              <button className="dropdown-item" type="button">
+                Another action
+              </button>
             </li>
-            <li className="nav-item">
-              <a className="nav-link" href="#/">
-                Pricing
-              </a>
+            <li>
+              <hr className="dropdown-divider" />
+            </li>
+            <li>
+              <button className="dropdown-item" type="button">
+                <FontAwesomeIcon
+                  icon={faRightFromBracket}
+                  className="fw-bolder me-2 "
+                />{" "}
+                Cerrar sesión
+              </button>
             </li>
           </ul>
         </div>
