@@ -12,9 +12,8 @@ import AdminUser from "./dashboard/admin_user/admin_user";
 import AddUser from "./dashboard/admin_user/add_user";
 import EditUser from "./dashboard/admin_user/edit_user";
 
-import { element } from "prop-types";
-import "./App.css";
 import ReporteGeneral from "./dashboard/reportes/reporte_general";
+import "./App.css";
 
 const routes = [
   { path: "/", element: <Login /> },
