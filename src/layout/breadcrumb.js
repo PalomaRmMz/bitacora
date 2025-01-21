@@ -1,7 +1,5 @@
 import React from "react";
 import { Link, useLocation } from "react-router-dom";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faChevronRight } from "@fortawesome/free-solid-svg-icons";
 import routesConfig from "../routes";
 
 const Breadcrumb = () => {
@@ -12,6 +10,14 @@ const Breadcrumb = () => {
     let currentPath = "";
     let breadcrumbs = [];
 
+    if (location.pathname !== "/") {
+      breadcrumbs.push(
+        <li key="home" className="breadcrumb-item">
+          <Link to="/">Home</Link>
+        </li>
+      );
+    }
+
     pathnames.forEach((value, index) => {
       currentPath += `/${value}`;
       const route = routesConfig.find((route) => route.path === currentPath);
@@ -19,27 +25,23 @@ const Breadcrumb = () => {
       if (route) {
         if (route.breadcrumbParent) {
           breadcrumbs.push(
-            <span key={route.path + "-parent"}>
-              {index > 0 && (
-                <FontAwesomeIcon icon={faChevronRight} className="ms-1 me-1" />
-              )}
+            <li key={route.path + "-parent"} className="breadcrumb-item">
               <Link to={`/${pathnames.slice(0, index + 1).join("/")}`}>
                 {route.breadcrumbParent}
               </Link>
-              <FontAwesomeIcon icon={faChevronRight} className="ms-1 me-1" />
-            </span>
+            </li>
           );
         }
+
         breadcrumbs.push(
-          <span key={route.path + "-child"}>
-            <Link to={currentPath}>{route.label}</Link>
-          </span>
+          <li
+            key={route.path + "-child"}
+            className="breadcrumb-item active"
+            aria-current="page"
+          >
+            {route.label}
+          </li>
         );
-        if (index < pathnames.length - 1) {
-          breadcrumbs.push(
-            <FontAwesomeIcon icon={faChevronRight} className="ms-1 me-1" />
-          );
-        }
       }
     });
 
@@ -47,13 +49,8 @@ const Breadcrumb = () => {
   };
 
   return (
-    <nav>
-      <ol className="breadcrumb">
-        <li className="breadcrumb-item">
-          <Link to="/">Home</Link>
-        </li>
-        {getBreadcrumbs()}
-      </ol>
+    <nav aria-label="breadcrumb">
+      <ol className="breadcrumb">{getBreadcrumbs()}</ol>
     </nav>
   );
 };
