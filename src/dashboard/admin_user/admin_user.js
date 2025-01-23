@@ -1,12 +1,18 @@
 import React, { useEffect, useState, useMemo } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faChalkboardUser } from "@fortawesome/free-solid-svg-icons";
+import {
+  faChalkboardUser,
+  faTrash,
+  faPenToSquare,
+  faUserPlus,
+} from "@fortawesome/free-solid-svg-icons";
 import { getUsuarios } from "../../services/usuarios";
 import {
   MaterialReactTable,
   useMaterialReactTable,
 } from "material-react-table";
 import { MRT_Localization_ES } from "material-react-table/locales/es";
+import { Box, IconButton } from "@mui/material";
 
 const AdminUser = () => {
   const [usuarios, setUsuarios] = useState([]);
@@ -40,7 +46,7 @@ const AdminUser = () => {
       },
       {
         accessorKey: "tipo_usuario",
-        header: "Tipo de Usuario",
+        header: "Rol",
       },
     ],
     []
@@ -52,6 +58,18 @@ const AdminUser = () => {
     enableHiding: false,
     enableClickToCopy: true,
     enableColumnActions: false,
+    enableRowActions: true,
+    positionActionsColumn: "last",
+    renderRowActions: ({ row, table }) => (
+      <Box>
+        <IconButton color="success">
+          <FontAwesomeIcon icon={faPenToSquare} />
+        </IconButton>
+        <IconButton color="error">
+          <FontAwesomeIcon icon={faTrash} />
+        </IconButton>
+      </Box>
+    ),
     enableDensityToggle: false,
     initialState: { density: "compact" },
     localization: {
@@ -72,6 +90,11 @@ const AdminUser = () => {
           </h2>
         </div>
         <div className="card-body">
+          <div className="w-100 text-end mt-2 mb-2">
+            <button type="button" className="btn btn-success text-end">
+              <FontAwesomeIcon icon={faUserPlus} /> Agregar usuario
+            </button>
+          </div>
           <MaterialReactTable table={table} />
         </div>
       </div>
