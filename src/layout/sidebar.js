@@ -8,6 +8,7 @@ import {
   faCog,
   faUser,
   faBook,
+  faIdCard,
   faFileSignature,
 } from "@fortawesome/free-solid-svg-icons";
 import PropTypes from "prop-types";
@@ -18,6 +19,17 @@ const Sidebar = () => {
 
   const routes = [
     { path: "/home", label: "Home", icon: faHome },
+    {
+      path: "/visitantes",
+      label: "Visitantes",
+      icon: faIdCard,
+      hasSubMenu: true,
+      subRoutes: [
+        { path: "/visitantes/admin_visitantes", label: "Administrar" },
+        // { path: "/visitantes/add_visitantes", label: "Agregar" },
+        // { path: "/visitantes/edit_visitantes", label: "Editar" },
+      ],
+    },
     {
       path: "/visitas",
       label: "Visitas",
