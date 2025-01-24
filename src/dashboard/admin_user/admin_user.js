@@ -59,7 +59,6 @@ const AdminUser = () => {
     enableClickToCopy: true,
     enableColumnActions: false,
     enableRowActions: true,
-    positionActionsColumn: "last",
     renderRowActions: ({ row, table }) => (
       <Box>
         <IconButton color="success">

@@ -3,6 +3,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faChalkboardUser,
   faTrash,
+  faEye,
   faPenToSquare,
   faUserPlus,
 } from "@fortawesome/free-solid-svg-icons";
@@ -33,12 +34,25 @@ const AdminVisitas = () => {
   const columns = useMemo(
     () => [
       {
-        accessorKey: "fecha_visita",
-        header: "Fecha",
+        Cell: ({ cell }) => new Date(cell.getValue()).toLocaleDateString(),
+        accessorFn: (row) => new Date(row.fecha_visita),
+        filterFn: "lessThan",
+        filterVariant: "date",
+        id: "fecha_visita",
+        header: "Fecha visita",
       },
       {
-        accessorKey: "hora_visita",
-        header: "Hora",
+        Cell: ({ cell }) => {
+          const hora = cell.getValue();
+          if (hora) {
+            return hora.substring(0, 5);
+          }
+          return "Hora inválida";
+        },
+        accessorFn: (row) => row.hora_visita,
+        filterVariant: "time",
+        id: "hora_visita",
+        header: "Hora visita",
       },
       {
         accessorFn: (row) =>
@@ -53,12 +67,26 @@ const AdminVisitas = () => {
         header: "Visitante",
       },
       {
-        accessorKey: "fecha_cumpleanos",
+        Cell: ({ cell }) =>
+          cell.getValue()
+            ? new Date(cell.getValue()).toLocaleDateString("es-ES", {
+                day: "2-digit",
+                month: "long",
+              })
+            : "Sin fecha",
+        accessorFn: (row) =>
+          row.fecha_cumpleanos ? new Date(row.fecha_cumpleanos) : null,
+        id: "fecha_cumpleanos",
         header: "Cumpleaños",
       },
       {
-        accessorFn: (row) =>
-          `${row.calle} No. Exterior.:${row.numero_exterior} ${row.numero_interior}`,
+        accessorFn: (row) => {
+          const numeroInterior =
+            row.numero_interior && row.numero_interior !== "S/N"
+              ? `, Interior: ${row.numero_interior}`
+              : "";
+          return `${row.calle} No.: ${row.numero_exterior}${numeroInterior}`;
+        },
         id: "Calle",
         header: "Calle",
       },
@@ -101,7 +129,6 @@ const AdminVisitas = () => {
     enableClickToCopy: true,
     enableColumnActions: false,
     enableRowActions: true,
-    positionActionsColumn: "last",
     renderRowActions: ({ row, table }) => (
       <Box>
         <IconButton color="success">
@@ -109,6 +136,9 @@ const AdminVisitas = () => {
         </IconButton>
         <IconButton color="error">
           <FontAwesomeIcon icon={faTrash} />
+        </IconButton>
+        <IconButton color="warning">
+          <FontAwesomeIcon icon={faEye} />
         </IconButton>
       </Box>
     ),
