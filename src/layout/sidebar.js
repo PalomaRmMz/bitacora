@@ -46,7 +46,10 @@ const Sidebar = () => {
       label: "Reportes",
       icon: faFileSignature,
       hasSubMenu: true,
-      subRoutes: [{ path: "/reportes/visitas", label: "Visitas" }],
+      subRoutes: [
+        { path: "/reportes/visitas", label: "Visitas" },
+        { path: "/reportes/visitantes", label: "Visitantes" },
+      ],
     },
     {
       path: "/admin",

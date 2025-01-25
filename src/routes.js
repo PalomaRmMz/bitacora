@@ -11,7 +11,8 @@ import AdminUser from "./dashboard/admin_user/admin_user";
 import AddUser from "./dashboard/admin_user/add_user";
 import EditUser from "./dashboard/admin_user/edit_user";
 
-import ReporteGeneral from "./dashboard/reportes/visitas";
+import ReporteVisitas from "./dashboard/reportes/visitas";
+import ReporteVisitantes from "./dashboard/reportes/visitantes";
 
 const routesConfig = [
   { path: "/", element: <Login />, label: null },
@@ -40,13 +41,16 @@ const routesConfig = [
     label: "Editar visitas",
     breadcrumbParent: "Apartado visitas",
   },
-
   {
     path: "/reportes/visitas",
-    element: <ReporteGeneral />,
-    label: "Reporte general",
+    element: <ReporteVisitas />,
+    label: "Reporte de visitas",
   },
-
+  {
+    path: "/reportes/visitantes",
+    element: <ReporteVisitantes />,
+    label: "Reporte de visitantes",
+  },
   {
     path: "/admin/admin_user",
     element: <AdminUser />,

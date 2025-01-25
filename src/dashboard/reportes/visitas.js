@@ -22,7 +22,7 @@ import {
 import { MRT_Localization_ES } from "material-react-table/locales/es";
 import * as XLSX from "xlsx";
 
-const ReporteGeneral = () => {
+const ReporteVisitas = () => {
   const [visitas, setVisitas] = useState([]);
   const [filteredVisitas, setFilteredVisitas] = useState([]);
   const [colonias, setColonias] = useState([]);
@@ -262,9 +262,9 @@ const ReporteGeneral = () => {
     <div>
       <div className="card">
         <div className="card-header">
-          <h2>
+          <h3>
             <FontAwesomeIcon icon={faFilter} /> Filtrado de Visitas
-          </h2>
+          </h3>
         </div>
         <div className="card-body">
           <div className="row">
@@ -288,7 +288,7 @@ const ReporteGeneral = () => {
           </div>
 
           <hr className="mt-5 mb-1 border border-3 border-secondary" />
-          <h4>Datos del visitante</h4>
+          <h5>Datos del visitante</h5>
           <div className="row">
             <div className="col-md-4">
               <label
@@ -436,7 +436,7 @@ const ReporteGeneral = () => {
           </div>
 
           <hr className="mt-5 mb-1 border border-3 border-secondary" />
-          <h4>Datos del recepcionista</h4>
+          <h5>Datos del recepcionista</h5>
           <div className="row">
             <div className="col-md-4">
               <label
@@ -535,9 +535,9 @@ const ReporteGeneral = () => {
       {showTable && (
         <div className="card mt-3">
           <div className="card-header">
-            <h2>
+            <h3>
               <FontAwesomeIcon icon={faChalkboardUser} /> Reporte de Visitas
-            </h2>
+            </h3>
           </div>
           <div className="card-body">
             <button
@@ -555,4 +555,4 @@ const ReporteGeneral = () => {
   );
 };
 
-export default ReporteGeneral;
+export default ReporteVisitas;
