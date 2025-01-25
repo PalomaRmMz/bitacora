@@ -11,3 +11,7 @@ body {
 .w-30 {
   width: 30% !important;
 }
+
+.fs-7 {
+  font-size: .75rem !important;
+}

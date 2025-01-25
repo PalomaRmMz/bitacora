@@ -1,6 +1,11 @@
 import React, { useEffect, useState, useMemo } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faChalkboardUser } from "@fortawesome/free-solid-svg-icons";
+import {
+  faChalkboardUser,
+  faFilter,
+  faFilterCircleXmark,
+  faListUl,
+} from "@fortawesome/free-solid-svg-icons";
 import { getVisitas } from "../../services/visitas";
 import {
   getColonias,
@@ -81,7 +86,6 @@ const ReporteGeneral = () => {
         });
       }
     });
-
     setFilteredVisitas(filteredData);
     setShowTable(true);
   };
@@ -98,6 +102,11 @@ const ReporteGeneral = () => {
     });
     setFilteredVisitas(visitas);
     setShowTable(false);
+  };
+
+  const showAllRecords = () => {
+    setFilteredVisitas(visitas);
+    setShowTable(true);
   };
 
   const columns = useMemo(
@@ -183,13 +192,16 @@ const ReporteGeneral = () => {
           </h2>
         </div>
         <div className="card-body">
-          <div>
-            <div>
-              <label htmlFor="fecha_visita" className="form-label">
+          <div className="row">
+            <div className="col-md-2">
+              <label
+                htmlFor="fecha_visita"
+                className="form-label fw-bolder fs-7"
+              >
                 Fecha de visita
               </label>
               <input
-                type="text"
+                type="date"
                 className="form-control"
                 id="fecha_visita"
                 value={filters.fecha_visita}
@@ -198,22 +210,10 @@ const ReporteGeneral = () => {
                 }
               />
             </div>
-            <div>
-              <label htmlFor="recepcionista" className="form-label">
-                Recepcionista
-              </label>
-              <input
-                type="text"
-                className="form-control"
-                id="recepcionista"
-                value={filters.recepcionista}
-                onChange={(e) =>
-                  setFilters({ ...filters, recepcionista: e.target.value })
-                }
-              />
-            </div>
-            <div>
-              <label htmlFor="visitante" className="form-label">
+          </div>
+          <div className="row mt-4">
+            <div className="col-md-6">
+              <label htmlFor="visitante" className="form-label fw-bolder fs-7">
                 Visitante
               </label>
               <input
@@ -226,20 +226,19 @@ const ReporteGeneral = () => {
                 }
               />
             </div>
-
-            <div>
-              <label htmlFor="colonia" className="form-label">
+            <div className="col-md-3">
+              <label htmlFor="colonia" className="form-label fw-bolder fs-7">
                 Colonia
               </label>
               <select
-                className="form-control"
+                className="form-select"
                 id="colonia"
                 value={filters.colonia}
                 onChange={(e) =>
                   setFilters({ ...filters, colonia: e.target.value })
                 }
               >
-                <option selected disabled value="">
+                <option disabled value="">
                   Seleccione una colonia
                 </option>
                 {colonias.map((colonia) => (
@@ -252,20 +251,19 @@ const ReporteGeneral = () => {
                 ))}
               </select>
             </div>
-
-            <div>
-              <label htmlFor="municipio" className="form-label">
+            <div className="col-md-3">
+              <label htmlFor="municipio" className="form-label fw-bolder fs-7">
                 Municipio
               </label>
               <select
-                className="form-control"
+                className="form-select"
                 id="municipio"
                 value={filters.municipio}
                 onChange={(e) =>
                   setFilters({ ...filters, municipio: e.target.value })
                 }
               >
-                <option selected disabled value="">
+                <option disabled value="">
                   Seleccione un municipio
                 </option>
                 {municipios.map((municipio) => (
@@ -278,20 +276,21 @@ const ReporteGeneral = () => {
                 ))}
               </select>
             </div>
-
-            <div>
-              <label htmlFor="estado" className="form-label">
+          </div>
+          <div className="row mt-4">
+            <div className="col-md-3">
+              <label htmlFor="estado" className="form-label fw-bolder fs-7">
                 Estado
               </label>
               <select
-                className="form-control"
+                className="form-select"
                 id="estado"
                 value={filters.estado}
                 onChange={(e) =>
                   setFilters({ ...filters, estado: e.target.value })
                 }
               >
-                <option selected disabled value="">
+                <option disabled value="">
                   Seleccione un estado
                 </option>
                 {estados.map((estado) => (
@@ -301,9 +300,8 @@ const ReporteGeneral = () => {
                 ))}
               </select>
             </div>
-
-            <div>
-              <label htmlFor="seccion" className="form-label">
+            <div className="col-md-3">
+              <label htmlFor="seccion" className="form-label fw-bolder fs-7">
                 Sección
               </label>
               <input
@@ -316,20 +314,52 @@ const ReporteGeneral = () => {
                 }
               />
             </div>
-            <button
-              type="button"
-              className="btn btn-success"
-              onClick={applyFilters}
-            >
-              Filtrar
-            </button>
-            <button
-              type="button"
-              className="btn btn-danger"
-              onClick={clearFilters}
-            >
-              Limpiar
-            </button>
+            <div className="col-md-6">
+              <label
+                htmlFor="recepcionista"
+                className="form-label fw-bolder fs-7"
+              >
+                Recepcionista
+              </label>
+              <input
+                type="text"
+                className="form-control"
+                id="recepcionista"
+                value={filters.recepcionista}
+                onChange={(e) =>
+                  setFilters({ ...filters, recepcionista: e.target.value })
+                }
+              />
+            </div>
+            <div className="row mt-4">
+              <div className="col-md-3">
+                <button
+                  type="button"
+                  className="btn btn-success"
+                  onClick={applyFilters}
+                >
+                  <FontAwesomeIcon icon={faFilter} /> Filtrar
+                </button>
+              </div>
+              <div className="col-md-3">
+                <button
+                  type="button"
+                  className="btn btn-danger"
+                  onClick={clearFilters}
+                >
+                  <FontAwesomeIcon icon={faFilterCircleXmark} /> Limpiar
+                </button>
+              </div>
+              <div className="col-md-3">
+                <button
+                  type="button"
+                  className="btn btn-primary"
+                  onClick={showAllRecords}
+                >
+                  <FontAwesomeIcon icon={faListUl} /> Todos
+                </button>
+              </div>
+            </div>
           </div>
 
           {showTable && <MaterialReactTable table={table} />}
