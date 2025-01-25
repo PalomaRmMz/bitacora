@@ -7,10 +7,7 @@ import "./layout.css";
 
 const Layout = ({ children }) => {
   return (
-    <div
-      className="d-flex flex-column bg-body-secondary"
-      style={{ height: "100vh" }}
-    >
+    <div className="d-flex flex-column" style={{ height: "100vh" }}>
       <Topbar />
       <div className="d-flex sidebar-and-content">
         <Sidebar />

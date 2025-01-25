@@ -5,6 +5,7 @@ import {
   faFilter,
   faFilterCircleXmark,
   faListUl,
+  faFileExcel,
 } from "@fortawesome/free-solid-svg-icons";
 import { getVisitas } from "../../services/visitas";
 import {
@@ -19,6 +20,7 @@ import {
   useMaterialReactTable,
 } from "material-react-table";
 import { MRT_Localization_ES } from "material-react-table/locales/es";
+import * as XLSX from "xlsx";
 
 const ReporteGeneral = () => {
   const [visitas, setVisitas] = useState([]);
@@ -109,6 +111,58 @@ const ReporteGeneral = () => {
     setShowTable(true);
   };
 
+  const exportToExcel = () => {
+    const dataToExport = filteredVisitas.map((visita) => ({
+      "Fecha Visita": new Date(visita.fecha_visita).toLocaleDateString(),
+      "Hora Visita": visita.hora_visita
+        ? new Date(`1970-01-01T${visita.hora_visita}Z`).toLocaleTimeString(
+            "es-ES",
+            {
+              hour: "2-digit",
+              minute: "2-digit",
+              hour12: true,
+            }
+          )
+        : "Hora inválida",
+      Recepcionista: `${visita.recepcionista_nombre} ${visita.recepcionista_apellido_paterno} ${visita.recepcionista_apellido_materno}`,
+      Visitante: `${visita.visitante_nombre} ${visita.visitante_apellido_paterno} ${visita.visitante_apellido_materno}`,
+      Cumpleaños: visita.fecha_cumpleanos
+        ? new Date(visita.fecha_cumpleanos).toLocaleDateString("es-ES", {
+            day: "2-digit",
+            month: "long",
+          })
+        : "Sin fecha",
+      Calle: `${visita.calle} No.: ${visita.numero_exterior}${
+        visita.numero_interior && visita.numero_interior !== "S/N"
+          ? `, Interior: ${visita.numero_interior}`
+          : ""
+      }`,
+      Colonia: visita.nombre_colonias,
+      Municipio: visita.nombre_municipios,
+      Estado: visita.nombre_estado,
+      "Código Postal": visita.codigo_postal,
+      Sección: visita.nombre_seccion,
+      Asunto: visita.asunto,
+      Observaciones: visita.observaciones,
+    }));
+
+    const now = new Date();
+    const formattedDate = now.toLocaleDateString("es-ES").replace(/\//g, "-");
+    const formattedTime = now
+      .toLocaleTimeString("es-ES", {
+        hour: "2-digit",
+        minute: "2-digit",
+        second: "2-digit",
+      })
+      .replace(/:/g, "-");
+
+    const fileName = `reporte_visitas_${formattedDate}_${formattedTime}.xlsx`;
+    const worksheet = XLSX.utils.json_to_sheet(dataToExport);
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Reporte de Visitas");
+    XLSX.writeFile(workbook, fileName);
+  };
+
   const columns = useMemo(
     () => [
       {
@@ -117,8 +171,20 @@ const ReporteGeneral = () => {
         header: "Fecha visita",
       },
       {
-        accessorFn: (row) =>
-          row.hora_visita?.substring(0, 5) || "Hora inválida",
+        Cell: ({ cell }) => {
+          const hora = cell.getValue();
+          if (hora) {
+            const date = new Date(`1970-01-01T${hora}Z`);
+            return date.toLocaleTimeString("es-ES", {
+              hour: "2-digit",
+              minute: "2-digit",
+              hour12: true,
+            });
+          }
+          return "Hora inválida";
+        },
+        accessorFn: (row) => row.hora_visita,
+        filterVariant: "time",
         id: "hora_visita",
         header: "Hora visita",
       },
@@ -188,7 +254,7 @@ const ReporteGeneral = () => {
       <div className="card">
         <div className="card-header">
           <h2>
-            <FontAwesomeIcon icon={faChalkboardUser} /> Reporte de Visitas
+            <FontAwesomeIcon icon={faFilter} /> Filtrado de Visitas
           </h2>
         </div>
         <div className="card-body">
@@ -331,17 +397,17 @@ const ReporteGeneral = () => {
                 }
               />
             </div>
-            <div className="row mt-4">
-              <div className="col-md-3">
+            <div className="d-flex justify-content-around align-items-center">
+              <div className="mt-5 mb-2">
                 <button
                   type="button"
-                  className="btn btn-success"
+                  className="btn btn-warning"
                   onClick={applyFilters}
                 >
                   <FontAwesomeIcon icon={faFilter} /> Filtrar
                 </button>
               </div>
-              <div className="col-md-3">
+              <div className="mt-5 mb-2">
                 <button
                   type="button"
                   className="btn btn-danger"
@@ -350,7 +416,7 @@ const ReporteGeneral = () => {
                   <FontAwesomeIcon icon={faFilterCircleXmark} /> Limpiar
                 </button>
               </div>
-              <div className="col-md-3">
+              <div className="mt-5 mb-2">
                 <button
                   type="button"
                   className="btn btn-primary"
@@ -361,10 +427,28 @@ const ReporteGeneral = () => {
               </div>
             </div>
           </div>
-
-          {showTable && <MaterialReactTable table={table} />}
         </div>
       </div>
+
+      {showTable && (
+        <div className="card mt-3">
+          <div className="card-header">
+            <h2>
+              <FontAwesomeIcon icon={faChalkboardUser} /> Reporte de Visitas
+            </h2>
+          </div>
+          <div className="card-body">
+            <button
+              type="button"
+              className="btn btn-success"
+              onClick={exportToExcel}
+            >
+              <FontAwesomeIcon icon={faFileExcel} /> Exportar
+            </button>
+            <MaterialReactTable table={table} />
+          </div>
+        </div>
+      )}
     </div>
   );
 };

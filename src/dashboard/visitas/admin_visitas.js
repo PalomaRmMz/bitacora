@@ -45,7 +45,12 @@ const AdminVisitas = () => {
         Cell: ({ cell }) => {
           const hora = cell.getValue();
           if (hora) {
-            return hora.substring(0, 5);
+            const date = new Date(`1970-01-01T${hora}Z`);
+            return date.toLocaleTimeString("es-ES", {
+              hour: "2-digit",
+              minute: "2-digit",
+              hour12: true,
+            });
           }
           return "Hora inválida";
         },
