@@ -13,7 +13,7 @@ const Breadcrumb = () => {
     if (location.pathname !== "/") {
       breadcrumbs.push(
         <li key="home" className="breadcrumb-item">
-          <Link to="/">Home</Link>
+          <Link to="/home">Home</Link>
         </li>
       );
     }

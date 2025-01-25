@@ -1,6 +1,8 @@
 import Login from "./login/login";
 import Home from "./dashboard/home";
 
+import AdminVisitantes from "./dashboard/visitantes/admin_vistantes";
+
 import AdminVisitas from "./dashboard/visitas/admin_visitas";
 import AddVisitas from "./dashboard/visitas/add_visitas";
 import EditVisitas from "./dashboard/visitas/edit_visitas";
@@ -14,7 +16,12 @@ import ReporteGeneral from "./dashboard/reportes/reporte_general";
 const routesConfig = [
   { path: "/", element: <Login />, label: null },
   { path: "/home", element: <Home />, label: "Home" },
-
+  {
+    path: "/visitantes/admin_visitantes",
+    element: <AdminVisitantes />,
+    label: "Administrar visitantes",
+    breadcrumbParent: "Apartado visitantes",
+  },
   {
     path: "/visitas/admin_visitas",
     element: <AdminVisitas />,

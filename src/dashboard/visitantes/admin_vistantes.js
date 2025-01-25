@@ -5,9 +5,8 @@ import {
   faTrash,
   faEye,
   faPenToSquare,
-  faUserPlus,
 } from "@fortawesome/free-solid-svg-icons";
-import { getVisitas } from "../../services/visitas";
+import { getVisitantes } from "../../services/visitantes";
 import {
   MaterialReactTable,
   useMaterialReactTable,
@@ -15,56 +14,24 @@ import {
 import { MRT_Localization_ES } from "material-react-table/locales/es";
 import { Box, IconButton } from "@mui/material";
 
-const AdminVisitas = () => {
-  const [visitas, setVisitas] = useState([]);
+const AdminVisitantes = () => {
+  const [visitantes, setVisitantes] = useState([]);
 
   useEffect(() => {
-    const fetchVisitas = async () => {
+    const fetchVisitantes = async () => {
       try {
-        const data = await getVisitas();
-        setVisitas(data || []);
+        const data = await getVisitantes();
+        setVisitantes(data || []);
       } catch (error) {
-        console.error("Error al cargar las visitas:", error);
+        console.error("Error al cargar los visitantes:", error);
       }
     };
 
-    fetchVisitas();
+    fetchVisitantes();
   }, []);
 
   const columns = useMemo(
     () => [
-      {
-        Cell: ({ cell }) => new Date(cell.getValue()).toLocaleDateString(),
-        accessorFn: (row) => new Date(row.fecha_visita),
-        filterFn: "lessThan",
-        filterVariant: "date",
-        id: "fecha_visita",
-        header: "Fecha visita",
-      },
-      {
-        Cell: ({ cell }) => {
-          const hora = cell.getValue();
-          if (hora) {
-            const date = new Date(`1970-01-01T${hora}Z`);
-            return date.toLocaleTimeString("es-ES", {
-              hour: "2-digit",
-              minute: "2-digit",
-              hour12: true,
-            });
-          }
-          return "Hora inválida";
-        },
-        accessorFn: (row) => row.hora_visita,
-        filterVariant: "time",
-        id: "hora_visita",
-        header: "Hora visita",
-      },
-      {
-        accessorFn: (row) =>
-          `${row.recepcionista_nombre} ${row.recepcionista_apellido_paterno} ${row.recepcionista_apellido_materno}`,
-        id: "recepcionista",
-        header: "Recepcionista",
-      },
       {
         accessorFn: (row) =>
           `${row.visitante_nombre} ${row.visitante_apellido_paterno} ${row.visitante_apellido_materno}`,
@@ -79,49 +46,48 @@ const AdminVisitas = () => {
                 month: "long",
               })
             : "Sin fecha",
-        accessorFn: (row) =>
-          row.fecha_cumpleanos ? new Date(row.fecha_cumpleanos) : null,
-        id: "fecha_cumpleanos",
+        accessorFn: (row) => (row.cumpleanos ? new Date(row.cumpleanos) : null),
+        id: "cumpleanos",
         header: "Cumpleaños",
       },
       {
         accessorFn: (row) => {
           const numeroInterior =
-            row.numero_interior && row.numero_interior !== "S/N"
-              ? `, Interior: ${row.numero_interior}`
+            row.num_int && row.num_int !== "S/N"
+              ? `, Interior: ${row.num_int}`
               : "";
-          return `${row.calle} No.: ${row.numero_exterior}${numeroInterior}`;
+          return `${row.calle} No.: ${row.num_ext}${numeroInterior}`;
         },
         id: "Calle",
         header: "Calle",
       },
       {
-        accessorKey: "nombre_colonias",
+        accessorKey: "colonia",
         header: "Colonia",
       },
       {
-        accessorKey: "nombre_municipios",
+        accessorKey: "municipio",
         header: "Municipio",
       },
       {
-        accessorKey: "nombre_estado",
+        accessorKey: "estado",
         header: "Estado",
       },
       {
-        accessorKey: "codigo_postal",
+        accessorKey: "cp",
         header: "C.P.",
       },
       {
-        accessorKey: "nombre_seccion",
+        accessorKey: "seccion",
         header: "Sección",
       },
       {
-        accessorKey: "asunto",
-        header: "Asunto",
+        accessorKey: "correo",
+        header: "Correo",
       },
       {
-        accessorKey: "observaciones",
-        header: "Observaciones",
+        accessorKey: "celular",
+        header: "celular",
       },
     ],
     []
@@ -129,7 +95,7 @@ const AdminVisitas = () => {
 
   const table = useMaterialReactTable({
     columns,
-    data: visitas,
+    data: visitantes,
     enableHiding: false,
     enableClickToCopy: true,
     enableColumnActions: false,
@@ -162,15 +128,11 @@ const AdminVisitas = () => {
       <div className="card">
         <div className="card-header">
           <h2>
-            <FontAwesomeIcon icon={faChalkboardUser} /> Administrador de Visitas
+            <FontAwesomeIcon icon={faChalkboardUser} /> Administrador de
+            Visitantes
           </h2>
         </div>
         <div className="card-body">
-          <div className="w-100 text-end mt-2 mb-2">
-            <button type="button" className="btn btn-success text-end">
-              <FontAwesomeIcon icon={faUserPlus} /> Agregar visita
-            </button>
-          </div>
           <MaterialReactTable table={table} />
         </div>
       </div>
@@ -178,4 +140,4 @@ const AdminVisitas = () => {
   );
 };
 
-export default AdminVisitas;
+export default AdminVisitantes;
