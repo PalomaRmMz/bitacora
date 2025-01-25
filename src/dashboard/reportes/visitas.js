@@ -33,7 +33,11 @@ const ReporteGeneral = () => {
   const [filters, setFilters] = useState({
     fecha_visita: "",
     recepcionista: "",
-    visitante: "",
+    visitante_nombre: "",
+    visitante_apellido_paterno: "",
+    visitante_apellido_materno: "",
+    recepcionista_apellido_paterno: "",
+    recepcionista_apellido_materno: "",
     colonia: "",
     municipio: "",
     estado: "",
@@ -96,7 +100,11 @@ const ReporteGeneral = () => {
     setFilters({
       fecha_visita: "",
       recepcionista: "",
-      visitante: "",
+      visitante_nombre: "",
+      visitante_apellido_paterno: "",
+      visitante_apellido_materno: "",
+      recepcionista_apellido_paterno: "",
+      recepcionista_apellido_materno: "",
       colonia: "",
       municipio: "",
       estado: "",
@@ -236,6 +244,7 @@ const ReporteGeneral = () => {
   const table = useMaterialReactTable({
     columns,
     data: filteredVisitas,
+    enableTopToolbar: false,
     enableHiding: false,
     enableClickToCopy: true,
     enableColumnActions: false,
@@ -277,18 +286,64 @@ const ReporteGeneral = () => {
               />
             </div>
           </div>
-          <div className="row mt-4">
-            <div className="col-md-6">
-              <label htmlFor="visitante" className="form-label fw-bolder fs-7">
-                Visitante
+
+          <hr className="mt-5 mb-1 border border-3 border-secondary" />
+          <h4>Datos del visitante</h4>
+          <div className="row">
+            <div className="col-md-4">
+              <label
+                htmlFor="visitante_nombre"
+                className="form-label fw-bolder fs-7"
+              >
+                Nombre
               </label>
               <input
                 type="text"
                 className="form-control"
-                id="visitante"
-                value={filters.visitante}
+                id="visitante_nombre"
+                value={filters.visitante_nombre}
                 onChange={(e) =>
-                  setFilters({ ...filters, visitante: e.target.value })
+                  setFilters({ ...filters, visitante_nombre: e.target.value })
+                }
+              />
+            </div>
+            <div className="col-md-4">
+              <label
+                htmlFor="visitante_apellido_paterno"
+                className="form-label fw-bolder fs-7"
+              >
+                Apellido paterno
+              </label>
+              <input
+                type="text"
+                className="form-control"
+                id="visitante_apellido_paterno"
+                value={filters.visitante_apellido_paterno}
+                onChange={(e) =>
+                  setFilters({
+                    ...filters,
+                    visitante_apellido_paterno: e.target.value,
+                  })
+                }
+              />
+            </div>
+            <div className="col-md-4">
+              <label
+                htmlFor="visitante_nombre"
+                className="form-label fw-bolder fs-7"
+              >
+                Apellido materno
+              </label>
+              <input
+                type="text"
+                className="form-control"
+                id="visitante_apellido_materno"
+                value={filters.visitante_apellido_materno}
+                onChange={(e) =>
+                  setFilters({
+                    ...filters,
+                    visitante_apellido_materno: e.target.value,
+                  })
                 }
               />
             </div>
@@ -342,8 +397,6 @@ const ReporteGeneral = () => {
                 ))}
               </select>
             </div>
-          </div>
-          <div className="row mt-4">
             <div className="col-md-3">
               <label htmlFor="estado" className="form-label fw-bolder fs-7">
                 Estado
@@ -380,51 +433,100 @@ const ReporteGeneral = () => {
                 }
               />
             </div>
-            <div className="col-md-6">
+          </div>
+
+          <hr className="mt-5 mb-1 border border-3 border-secondary" />
+          <h4>Datos del recepcionista</h4>
+          <div className="row">
+            <div className="col-md-4">
               <label
-                htmlFor="recepcionista"
+                htmlFor="recepcionista_nombre"
                 className="form-label fw-bolder fs-7"
               >
-                Recepcionista
+                Nombre
               </label>
               <input
                 type="text"
                 className="form-control"
-                id="recepcionista"
-                value={filters.recepcionista}
+                id="recepcionista_nombre"
+                value={filters.recepcionista_nombre}
                 onChange={(e) =>
-                  setFilters({ ...filters, recepcionista: e.target.value })
+                  setFilters({
+                    ...filters,
+                    recepcionista_nombre: e.target.value,
+                  })
                 }
               />
             </div>
-            <div className="d-flex justify-content-around align-items-center">
-              <div className="mt-5 mb-2">
-                <button
-                  type="button"
-                  className="btn btn-warning"
-                  onClick={applyFilters}
-                >
-                  <FontAwesomeIcon icon={faFilter} /> Filtrar
-                </button>
-              </div>
-              <div className="mt-5 mb-2">
-                <button
-                  type="button"
-                  className="btn btn-danger"
-                  onClick={clearFilters}
-                >
-                  <FontAwesomeIcon icon={faFilterCircleXmark} /> Limpiar
-                </button>
-              </div>
-              <div className="mt-5 mb-2">
-                <button
-                  type="button"
-                  className="btn btn-primary"
-                  onClick={showAllRecords}
-                >
-                  <FontAwesomeIcon icon={faListUl} /> Todos
-                </button>
-              </div>
+            <div className="col-md-4">
+              <label
+                htmlFor="recepcionista_apellido_paterno"
+                className="form-label fw-bolder fs-7"
+              >
+                Apellido paterno
+              </label>
+              <input
+                type="text"
+                className="form-control"
+                id="recepcionista_apellido_paterno"
+                value={filters.recepcionista_apellido_paterno}
+                onChange={(e) =>
+                  setFilters({
+                    ...filters,
+                    recepcionista_apellido_paterno: e.target.value,
+                  })
+                }
+              />
+            </div>
+            <div className="col-md-4">
+              <label
+                htmlFor="recepcionista_apellido_materno"
+                className="form-label fw-bolder fs-7"
+              >
+                Apellido materno
+              </label>
+              <input
+                type="text"
+                className="form-control"
+                id="recepcionista_apellido_materno"
+                value={filters.recepcionista_apellido_materno}
+                onChange={(e) =>
+                  setFilters({
+                    ...filters,
+                    recepcionista_apellido_materno: e.target.value,
+                  })
+                }
+              />
+            </div>
+          </div>
+
+          <div className="d-flex justify-content-around align-items-center">
+            <div className="mt-5 mb-2">
+              <button
+                type="button"
+                className="btn btn-warning"
+                onClick={applyFilters}
+              >
+                <FontAwesomeIcon icon={faFilter} /> Filtrar
+              </button>
+            </div>
+            <div className="mt-5 mb-2">
+              <button
+                type="button"
+                className="btn btn-danger"
+                onClick={clearFilters}
+              >
+                <FontAwesomeIcon icon={faFilterCircleXmark} /> Limpiar
+              </button>
+            </div>
+            <div className="mt-5 mb-2">
+              <button
+                type="button"
+                className="btn btn-primary"
+                onClick={showAllRecords}
+              >
+                <FontAwesomeIcon icon={faListUl} /> Todos
+              </button>
             </div>
           </div>
         </div>
@@ -440,7 +542,7 @@ const ReporteGeneral = () => {
           <div className="card-body">
             <button
               type="button"
-              className="btn btn-success"
+              className="btn btn-success mb-3"
               onClick={exportToExcel}
             >
               <FontAwesomeIcon icon={faFileExcel} /> Exportar

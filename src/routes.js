@@ -11,7 +11,7 @@ import AdminUser from "./dashboard/admin_user/admin_user";
 import AddUser from "./dashboard/admin_user/add_user";
 import EditUser from "./dashboard/admin_user/edit_user";
 
-import ReporteGeneral from "./dashboard/reportes/reporte_general";
+import ReporteGeneral from "./dashboard/reportes/visitas";
 
 const routesConfig = [
   { path: "/", element: <Login />, label: null },
@@ -42,7 +42,7 @@ const routesConfig = [
   },
 
   {
-    path: "/reportes/reporte_general",
+    path: "/reportes/visitas",
     element: <ReporteGeneral />,
     label: "Reporte general",
   },
