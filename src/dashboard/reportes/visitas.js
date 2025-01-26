@@ -14,7 +14,6 @@ import {
   getColonias,
   getMunicipios,
   getEstados,
-  getCP,
   getSecciones,
 } from "../../services/catalogos";
 import {
@@ -32,7 +31,6 @@ const ReporteVisitas = () => {
   const [colonias, setColonias] = useState([]);
   const [municipios, setMunicipios] = useState([]);
   const [estados, setEstados] = useState([]);
-  const [codigosPostales, setCodigosPostales] = useState([]);
   const [secciones, setSecciones] = useState([]);
   const [filters, setFilters] = useState({
     fecha_visita: "",
@@ -57,14 +55,12 @@ const ReporteVisitas = () => {
           coloniasData,
           municipiosData,
           estadosData,
-          cpData,
           seccionesData,
         ] = await Promise.all([
           getVisitas(),
           getColonias(),
           getMunicipios(),
           getEstados(),
-          getCP(),
           getSecciones(),
         ]);
         setVisitas(visitasData || []);
@@ -72,7 +68,6 @@ const ReporteVisitas = () => {
         setColonias(coloniasData || []);
         setMunicipios(municipiosData || []);
         setEstados(estadosData || []);
-        setCodigosPostales(cpData || []);
         setSecciones(seccionesData || []);
       } catch (error) {
         console.error("Error al cargar los datos:", error);
@@ -301,17 +296,28 @@ const ReporteVisitas = () => {
             </div>
             <div className="col-md-3">
               <label htmlFor="seccion" className="form-label fw-bolder fs-7">
-                Sección
+                Sección electoral
               </label>
-              <input
-                type="text"
-                className="form-control"
+              <select
+                className="form-select"
                 id="seccion"
                 value={filters.seccion}
                 onChange={(e) =>
                   setFilters({ ...filters, seccion: e.target.value })
                 }
-              />
+              >
+                <option disabled value="">
+                  Seleccione una seccion
+                </option>
+                {secciones.map((seccion) => (
+                  <option
+                    key={seccion.id_seccion_electoral}
+                    value={seccion.nombre_seccion}
+                  >
+                    {seccion.nombre_seccion}
+                  </option>
+                ))}
+              </select>
             </div>
           </div>
 

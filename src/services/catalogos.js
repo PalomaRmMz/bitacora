@@ -5,7 +5,6 @@ const API_URLS = {
   colonias: `${API_BASE_URL}/catalogos/colonias`,
   municipios: `${API_BASE_URL}/catalogos/municipios`,
   estados: `${API_BASE_URL}/catalogos/estados`,
-  codigosPostales: `${API_BASE_URL}/catalogos/codigos-postales`,
   secciones: `${API_BASE_URL}/catalogos/secciones`,
 };
 
@@ -22,5 +21,4 @@ const fetchData = async (url) => {
 export const getColonias = () => fetchData(API_URLS.colonias);
 export const getMunicipios = () => fetchData(API_URLS.municipios);
 export const getEstados = () => fetchData(API_URLS.estados);
-export const getCP = () => fetchData(API_URLS.codigosPostales);
 export const getSecciones = () => fetchData(API_URLS.secciones);
