@@ -61,13 +61,13 @@ const AdminVisitas = () => {
       },
       {
         accessorFn: (row) =>
-          `${row.recepcionista_nombre} ${row.recepcionista_apellido_paterno} ${row.recepcionista_apellido_materno}`,
+          `${row.nombre_recep} ${row.ap_recep} ${row.am_recep}`,
         id: "recepcionista",
         header: "Recepcionista",
       },
       {
         accessorFn: (row) =>
-          `${row.visitante_nombre} ${row.visitante_apellido_paterno} ${row.visitante_apellido_materno}`,
+          `${row.nombre_visitante} ${row.ap_visitante} ${row.am_visitante}`,
         id: "visitante",
         header: "Visitante",
       },

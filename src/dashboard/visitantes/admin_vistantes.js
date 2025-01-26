@@ -34,7 +34,7 @@ const AdminVisitantes = () => {
     () => [
       {
         accessorFn: (row) =>
-          `${row.visitante_nombre} ${row.visitante_apellido_paterno} ${row.visitante_apellido_materno}`,
+          `${row.nombre_visitante} ${row.ap_visitante} ${row.am_visitante}`,
         id: "visitante",
         header: "Visitante",
       },
@@ -46,39 +46,40 @@ const AdminVisitantes = () => {
                 month: "long",
               })
             : "Sin fecha",
-        accessorFn: (row) => (row.cumpleanos ? new Date(row.cumpleanos) : null),
-        id: "cumpleanos",
+        accessorFn: (row) =>
+          row.fecha_cumpleanos ? new Date(row.fecha_cumpleanos) : null,
+        id: "fecha_cumpleanos",
         header: "Cumpleaños",
       },
       {
         accessorFn: (row) => {
           const numeroInterior =
-            row.num_int && row.num_int !== "S/N"
-              ? `, Interior: ${row.num_int}`
+            row.numero_interior && row.numero_interior !== "S/N"
+              ? `, Interior: ${row.numero_interior}`
               : "";
-          return `${row.calle} No.: ${row.num_ext}${numeroInterior}`;
+          return `${row.calle} No.: ${row.numero_exterior}${numeroInterior}`;
         },
         id: "Calle",
         header: "Calle",
       },
       {
-        accessorKey: "colonia",
+        accessorKey: "nombre_colonias",
         header: "Colonia",
       },
       {
-        accessorKey: "municipio",
+        accessorKey: "nombre_municipios",
         header: "Municipio",
       },
       {
-        accessorKey: "estado",
+        accessorKey: "nombre_estado",
         header: "Estado",
       },
       {
-        accessorKey: "cp",
+        accessorKey: "codigo_postal",
         header: "C.P.",
       },
       {
-        accessorKey: "seccion",
+        accessorKey: "nombre_seccion",
         header: "Sección",
       },
       {
@@ -86,7 +87,7 @@ const AdminVisitantes = () => {
         header: "Correo",
       },
       {
-        accessorKey: "celular",
+        accessorKey: "numero_celular",
         header: "celular",
       },
     ],

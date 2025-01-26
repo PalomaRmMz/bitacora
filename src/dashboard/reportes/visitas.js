@@ -8,6 +8,8 @@ import {
   faFileExcel,
 } from "@fortawesome/free-solid-svg-icons";
 import { getVisitas } from "../../services/visitas";
+import { getFilteredVisitas } from "../../services/visitasFilter";
+
 import {
   getColonias,
   getMunicipios,
@@ -20,7 +22,8 @@ import {
   useMaterialReactTable,
 } from "material-react-table";
 import { MRT_Localization_ES } from "material-react-table/locales/es";
-import * as XLSX from "xlsx";
+import { applyFilters, clearFilters } from "../../utilities/filterVisitas";
+import { exportToExcel } from "../../utilities/exportToExcel";
 
 const ReporteVisitas = () => {
   const [visitas, setVisitas] = useState([]);
@@ -32,16 +35,16 @@ const ReporteVisitas = () => {
   const [secciones, setSecciones] = useState([]);
   const [filters, setFilters] = useState({
     fecha_visita: "",
-    recepcionista: "",
-    visitante_nombre: "",
-    visitante_apellido_paterno: "",
-    visitante_apellido_materno: "",
-    recepcionista_apellido_paterno: "",
-    recepcionista_apellido_materno: "",
+    nombre_visitante: "",
+    ap_visitante: "",
+    am_visitante: "",
     colonia: "",
     municipio: "",
     estado: "",
     seccion: "",
+    nombre_recep: "",
+    ap_recep: "",
+    am_recep: "",
   });
   const [showTable, setShowTable] = useState(false);
 
@@ -78,98 +81,44 @@ const ReporteVisitas = () => {
     fetchData();
   }, []);
 
-  const applyFilters = () => {
-    let filteredData = visitas;
-
-    Object.keys(filters).forEach((key) => {
-      if (filters[key]) {
-        filteredData = filteredData.filter((visita) => {
-          const fieldValue =
-            key === "fecha_visita"
-              ? new Date(visita[key]).toLocaleDateString()
-              : visita[key]?.toLowerCase() || "";
-          return fieldValue.includes(filters[key].toLowerCase());
-        });
-      }
-    });
-    setFilteredVisitas(filteredData);
-    setShowTable(true);
-  };
-
-  const clearFilters = () => {
-    setFilters({
-      fecha_visita: "",
-      recepcionista: "",
-      visitante_nombre: "",
-      visitante_apellido_paterno: "",
-      visitante_apellido_materno: "",
-      recepcionista_apellido_paterno: "",
-      recepcionista_apellido_materno: "",
-      colonia: "",
-      municipio: "",
-      estado: "",
-      seccion: "",
-    });
-    setFilteredVisitas(visitas);
-    setShowTable(false);
-  };
-
   const showAllRecords = () => {
     setFilteredVisitas(visitas);
     setShowTable(true);
   };
 
-  const exportToExcel = () => {
-    const dataToExport = filteredVisitas.map((visita) => ({
-      "Fecha Visita": new Date(visita.fecha_visita).toLocaleDateString(),
-      "Hora Visita": visita.hora_visita
-        ? new Date(`1970-01-01T${visita.hora_visita}Z`).toLocaleTimeString(
-            "es-ES",
-            {
-              hour: "2-digit",
-              minute: "2-digit",
-              hour12: true,
-            }
-          )
-        : "Hora inválida",
-      Recepcionista: `${visita.recepcionista_nombre} ${visita.recepcionista_apellido_paterno} ${visita.recepcionista_apellido_materno}`,
-      Visitante: `${visita.visitante_nombre} ${visita.visitante_apellido_paterno} ${visita.visitante_apellido_materno}`,
-      Cumpleaños: visita.fecha_cumpleanos
-        ? new Date(visita.fecha_cumpleanos).toLocaleDateString("es-ES", {
-            day: "2-digit",
-            month: "long",
-          })
-        : "Sin fecha",
-      Calle: `${visita.calle} No.: ${visita.numero_exterior}${
-        visita.numero_interior && visita.numero_interior !== "S/N"
-          ? `, Interior: ${visita.numero_interior}`
-          : ""
-      }`,
-      Colonia: visita.nombre_colonias,
-      Municipio: visita.nombre_municipios,
-      Estado: visita.nombre_estado,
-      "Código Postal": visita.codigo_postal,
-      Sección: visita.nombre_seccion,
-      Asunto: visita.asunto,
-      Observaciones: visita.observaciones,
-    }));
-
-    const now = new Date();
-    const formattedDate = now.toLocaleDateString("es-ES").replace(/\//g, "-");
-    const formattedTime = now
-      .toLocaleTimeString("es-ES", {
-        hour: "2-digit",
-        minute: "2-digit",
-        second: "2-digit",
-      })
-      .replace(/:/g, "-");
-
-    const fileName = `reporte_visitas_${formattedDate}_${formattedTime}.xlsx`;
-    const worksheet = XLSX.utils.json_to_sheet(dataToExport);
-    const workbook = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(workbook, worksheet, "Reporte de Visitas");
-    XLSX.writeFile(workbook, fileName);
-  };
+  const formattedVisitas = filteredVisitas.map((visita) => ({
+    "Fecha Visita": new Date(visita.fecha_visita).toLocaleDateString(),
+    "Hora Visita": visita.hora_visita
+      ? new Date(`1970-01-01T${visita.hora_visita}Z`).toLocaleTimeString(
+          "es-ES",
+          {
+            hour: "2-digit",
+            minute: "2-digit",
+            hour12: true,
+          }
+        )
+      : "Hora inválida",
+    Recepcionista: `${visita.nombre_recep} ${visita.ap_recep} ${visita.am_recep}`,
+    Visitante: `${visita.nombre_visitante} ${visita.ap_visitante} ${visita.am_visitante}`,
+    Cumpleaños: visita.fecha_cumpleanos
+      ? new Date(visita.fecha_cumpleanos).toLocaleDateString("es-ES", {
+          day: "2-digit",
+          month: "long",
+        })
+      : "Sin fecha",
+    Calle: `${visita.calle} No.: ${visita.numero_exterior}${
+      visita.numero_interior && visita.numero_interior !== "S/N"
+        ? `, Interior: ${visita.numero_interior}`
+        : ""
+    }`,
+    Colonia: visita.nombre_colonias,
+    Municipio: visita.nombre_municipios,
+    Estado: visita.nombre_estado,
+    "Código Postal": visita.codigo_postal,
+    Sección: visita.nombre_seccion,
+    Asunto: visita.asunto,
+    Observaciones: visita.observaciones,
+  }));
 
   const columns = useMemo(
     () => [
@@ -198,13 +147,13 @@ const ReporteVisitas = () => {
       },
       {
         accessorFn: (row) =>
-          `${row.recepcionista_nombre} ${row.recepcionista_apellido_paterno} ${row.recepcionista_apellido_materno}`,
+          `${row.nombre_recep} ${row.ap_recep} ${row.am_recep}`,
         id: "recepcionista",
         header: "Recepcionista",
       },
       {
         accessorFn: (row) =>
-          `${row.visitante_nombre} ${row.visitante_apellido_paterno} ${row.visitante_apellido_materno}`,
+          `${row.nombre_visitante} ${row.ap_visitante} ${row.am_visitante}`,
         id: "visitante",
         header: "Visitante",
       },
@@ -292,7 +241,7 @@ const ReporteVisitas = () => {
           <div className="row">
             <div className="col-md-4">
               <label
-                htmlFor="visitante_nombre"
+                htmlFor="nombre_visitante"
                 className="form-label fw-bolder fs-7"
               >
                 Nombre
@@ -300,16 +249,16 @@ const ReporteVisitas = () => {
               <input
                 type="text"
                 className="form-control"
-                id="visitante_nombre"
-                value={filters.visitante_nombre}
+                id="nombre_visitante"
+                value={filters.nombre_visitante}
                 onChange={(e) =>
-                  setFilters({ ...filters, visitante_nombre: e.target.value })
+                  setFilters({ ...filters, nombre_visitante: e.target.value })
                 }
               />
             </div>
             <div className="col-md-4">
               <label
-                htmlFor="visitante_apellido_paterno"
+                htmlFor="ap_visitante"
                 className="form-label fw-bolder fs-7"
               >
                 Apellido paterno
@@ -317,19 +266,19 @@ const ReporteVisitas = () => {
               <input
                 type="text"
                 className="form-control"
-                id="visitante_apellido_paterno"
-                value={filters.visitante_apellido_paterno}
+                id="ap_visitante"
+                value={filters.ap_visitante}
                 onChange={(e) =>
                   setFilters({
                     ...filters,
-                    visitante_apellido_paterno: e.target.value,
+                    ap_visitante: e.target.value,
                   })
                 }
               />
             </div>
             <div className="col-md-4">
               <label
-                htmlFor="visitante_nombre"
+                htmlFor="nombre_visitante"
                 className="form-label fw-bolder fs-7"
               >
                 Apellido materno
@@ -337,12 +286,12 @@ const ReporteVisitas = () => {
               <input
                 type="text"
                 className="form-control"
-                id="visitante_apellido_materno"
-                value={filters.visitante_apellido_materno}
+                id="am_visitante"
+                value={filters.am_visitante}
                 onChange={(e) =>
                   setFilters({
                     ...filters,
-                    visitante_apellido_materno: e.target.value,
+                    am_visitante: e.target.value,
                   })
                 }
               />
@@ -440,7 +389,7 @@ const ReporteVisitas = () => {
           <div className="row">
             <div className="col-md-4">
               <label
-                htmlFor="recepcionista_nombre"
+                htmlFor="nombre_recep"
                 className="form-label fw-bolder fs-7"
               >
                 Nombre
@@ -448,52 +397,46 @@ const ReporteVisitas = () => {
               <input
                 type="text"
                 className="form-control"
-                id="recepcionista_nombre"
-                value={filters.recepcionista_nombre}
+                id="nombre_recep"
+                value={filters.nombre_recep}
                 onChange={(e) =>
                   setFilters({
                     ...filters,
-                    recepcionista_nombre: e.target.value,
+                    nombre_recep: e.target.value,
                   })
                 }
               />
             </div>
             <div className="col-md-4">
-              <label
-                htmlFor="recepcionista_apellido_paterno"
-                className="form-label fw-bolder fs-7"
-              >
+              <label htmlFor="ap_recep" className="form-label fw-bolder fs-7">
                 Apellido paterno
               </label>
               <input
                 type="text"
                 className="form-control"
-                id="recepcionista_apellido_paterno"
-                value={filters.recepcionista_apellido_paterno}
+                id="ap_recep"
+                value={filters.ap_recep}
                 onChange={(e) =>
                   setFilters({
                     ...filters,
-                    recepcionista_apellido_paterno: e.target.value,
+                    ap_recep: e.target.value,
                   })
                 }
               />
             </div>
             <div className="col-md-4">
-              <label
-                htmlFor="recepcionista_apellido_materno"
-                className="form-label fw-bolder fs-7"
-              >
+              <label htmlFor="am_recep" className="form-label fw-bolder fs-7">
                 Apellido materno
               </label>
               <input
                 type="text"
                 className="form-control"
-                id="recepcionista_apellido_materno"
-                value={filters.recepcionista_apellido_materno}
+                id="am_recep"
+                value={filters.am_recep}
                 onChange={(e) =>
                   setFilters({
                     ...filters,
-                    recepcionista_apellido_materno: e.target.value,
+                    am_recep: e.target.value,
                   })
                 }
               />
@@ -505,7 +448,14 @@ const ReporteVisitas = () => {
               <button
                 type="button"
                 className="btn btn-warning"
-                onClick={applyFilters}
+                onClick={() =>
+                  applyFilters(
+                    filters,
+                    getFilteredVisitas,
+                    setFilteredVisitas,
+                    setShowTable
+                  )
+                }
               >
                 <FontAwesomeIcon icon={faFilter} /> Filtrar
               </button>
@@ -513,8 +463,15 @@ const ReporteVisitas = () => {
             <div className="mt-5 mb-2">
               <button
                 type="button"
-                className="btn btn-danger"
-                onClick={clearFilters}
+                className="btn btn-danger mt-4 mb-2"
+                onClick={() =>
+                  clearFilters(
+                    setFilters,
+                    setFilteredVisitas,
+                    visitas,
+                    setShowTable
+                  )
+                }
               >
                 <FontAwesomeIcon icon={faFilterCircleXmark} /> Limpiar
               </button>
@@ -542,8 +499,14 @@ const ReporteVisitas = () => {
           <div className="card-body">
             <button
               type="button"
-              className="btn btn-success mb-3"
-              onClick={exportToExcel}
+              className="btn btn-success"
+              onClick={() =>
+                exportToExcel(
+                  formattedVisitas,
+                  "reporte_visitas",
+                  "Reporte de Visitas"
+                )
+              }
             >
               <FontAwesomeIcon icon={faFileExcel} /> Exportar
             </button>

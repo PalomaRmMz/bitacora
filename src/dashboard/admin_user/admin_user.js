@@ -37,11 +37,11 @@ const AdminUser = () => {
         header: "Nombre",
       },
       {
-        accessorKey: "apellido_paterno",
+        accessorKey: "ap_usuario",
         header: "Apellido Paterno",
       },
       {
-        accessorKey: "apellido_materno",
+        accessorKey: "am_usuario",
         header: "Apellido Materno",
       },
       {
