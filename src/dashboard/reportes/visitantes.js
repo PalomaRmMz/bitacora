@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useMemo } from "react";
+import React, { useEffect, useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faChalkboardUser,
@@ -24,6 +24,7 @@ import {
 import { MRT_Localization_ES } from "material-react-table/locales/es";
 import { applyFilters, clearFilters } from "../../utilities/filterVisitantes";
 import { exportToExcel } from "../../utilities/exportToExcel";
+import { visitantesColumns } from "../../utilities/columns";
 
 const ReporteVisitantes = () => {
   const [visitantes, setVisitantes] = useState([]);
@@ -102,47 +103,8 @@ const ReporteVisitantes = () => {
     Sección: visitante.nombre_seccion,
   }));
 
-  const columns = useMemo(
-    () => [
-      {
-        accessorFn: (row) =>
-          `${row.nombre_visitante} ${row.ap_visitante} ${row.am_visitante}`,
-        id: "visitante",
-        header: "Visitante",
-      },
-      {
-        accessorFn: (row) =>
-          row.fecha_cumpleanos
-            ? new Date(row.fecha_cumpleanos).toLocaleDateString("es-ES", {
-                day: "2-digit",
-                month: "long",
-              })
-            : "Sin fecha",
-        id: "fecha_cumpleanos",
-        header: "Cumpleaños",
-      },
-      {
-        accessorFn: (row) => {
-          const numeroInterior =
-            row.numero_interior && row.numero_interior !== "S/N"
-              ? `, Interior: ${row.numero_interior}`
-              : "";
-          return `${row.calle} No.: ${row.numero_exterior}${numeroInterior}`;
-        },
-        id: "Calle",
-        header: "Calle",
-      },
-      { accessorKey: "nombre_colonias", header: "Colonia" },
-      { accessorKey: "nombre_municipios", header: "Municipio" },
-      { accessorKey: "nombre_estado", header: "Estado" },
-      { accessorKey: "codigo_postal", header: "C.P." },
-      { accessorKey: "nombre_seccion", header: "Sección" },
-    ],
-    []
-  );
-
   const table = useMaterialReactTable({
-    columns,
+    columns: visitantesColumns,
     data: filteredVisitantes,
     enableTopToolbar: false,
     enableHiding: false,

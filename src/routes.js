@@ -1,7 +1,7 @@
 import Login from "./login/login";
 import Home from "./dashboard/home";
 
-import AdminVisitantes from "./dashboard/visitantes/admin_vistantes";
+import AdminVisitantes from "./dashboard/visitantes/admin_visitantes";
 
 import AdminVisitas from "./dashboard/visitas/admin_visitas";
 import AddVisitas from "./dashboard/visitas/add_visitas";
