@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useMemo } from "react";
+import React, { useEffect, useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faChalkboardUser,
@@ -13,6 +13,7 @@ import {
 } from "material-react-table";
 import { MRT_Localization_ES } from "material-react-table/locales/es";
 import { Box, IconButton } from "@mui/material";
+import { visitantesColumns } from "../../utilities/columns";
 
 const AdminVisitantes = () => {
   const [visitantes, setVisitantes] = useState([]);
@@ -30,71 +31,8 @@ const AdminVisitantes = () => {
     fetchVisitantes();
   }, []);
 
-  const columns = useMemo(
-    () => [
-      {
-        accessorFn: (row) =>
-          `${row.visitante_nombre} ${row.visitante_apellido_paterno} ${row.visitante_apellido_materno}`,
-        id: "visitante",
-        header: "Visitante",
-      },
-      {
-        Cell: ({ cell }) =>
-          cell.getValue()
-            ? new Date(cell.getValue()).toLocaleDateString("es-ES", {
-                day: "2-digit",
-                month: "long",
-              })
-            : "Sin fecha",
-        accessorFn: (row) => (row.cumpleanos ? new Date(row.cumpleanos) : null),
-        id: "cumpleanos",
-        header: "Cumpleaños",
-      },
-      {
-        accessorFn: (row) => {
-          const numeroInterior =
-            row.num_int && row.num_int !== "S/N"
-              ? `, Interior: ${row.num_int}`
-              : "";
-          return `${row.calle} No.: ${row.num_ext}${numeroInterior}`;
-        },
-        id: "Calle",
-        header: "Calle",
-      },
-      {
-        accessorKey: "colonia",
-        header: "Colonia",
-      },
-      {
-        accessorKey: "municipio",
-        header: "Municipio",
-      },
-      {
-        accessorKey: "estado",
-        header: "Estado",
-      },
-      {
-        accessorKey: "cp",
-        header: "C.P.",
-      },
-      {
-        accessorKey: "seccion",
-        header: "Sección",
-      },
-      {
-        accessorKey: "correo",
-        header: "Correo",
-      },
-      {
-        accessorKey: "celular",
-        header: "celular",
-      },
-    ],
-    []
-  );
-
   const table = useMaterialReactTable({
-    columns,
+    columns: visitantesColumns,
     data: visitantes,
     enableHiding: false,
     enableClickToCopy: true,

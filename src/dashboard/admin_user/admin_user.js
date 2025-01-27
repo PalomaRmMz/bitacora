@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useMemo } from "react";
+import React, { useEffect, useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faChalkboardUser,
@@ -13,6 +13,7 @@ import {
 } from "material-react-table";
 import { MRT_Localization_ES } from "material-react-table/locales/es";
 import { Box, IconButton } from "@mui/material";
+import { userColumns } from "../../utilities/columns";
 
 const AdminUser = () => {
   const [usuarios, setUsuarios] = useState([]);
@@ -30,30 +31,8 @@ const AdminUser = () => {
     fetchUsuarios();
   }, []);
 
-  const columns = useMemo(
-    () => [
-      {
-        accessorKey: "nombre",
-        header: "Nombre",
-      },
-      {
-        accessorKey: "apellido_paterno",
-        header: "Apellido Paterno",
-      },
-      {
-        accessorKey: "apellido_materno",
-        header: "Apellido Materno",
-      },
-      {
-        accessorKey: "tipo_usuario",
-        header: "Rol",
-      },
-    ],
-    []
-  );
-
   const table = useMaterialReactTable({
-    columns,
+    columns: userColumns,
     data: usuarios,
     enableHiding: false,
     enableClickToCopy: true,
