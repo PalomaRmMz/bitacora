@@ -14,20 +14,53 @@ import {
   getSecciones,
   getCP,
 } from "../../services/catalogos";
+import { generateID } from "../../utilities/generateID";
+import { agregarVisita } from "../../services/visitasAdd";
 
 const AddVisitas = () => {
-  const [fechaActual, setFechaActual] = useState("");
-  const [horaActual, setHoraActual] = useState("");
-  const [colonias, setColonias] = useState([]);
-  const [municipios, setMunicipios] = useState([]);
-  const [estados, setEstados] = useState([]);
-  const [codigosPostales, setCodigosPostales] = useState([]);
-  const [secciones, setSecciones] = useState([]);
-  const [showVisitanteNuevo, setShowVisitanteNuevo] = useState(false);
-  const [showVisitanteExistente, setShowVisitanteExistente] = useState(false);
+  const [listas, setListas] = useState({
+    colonias: [],
+    municipios: [],
+    estados: [],
+    codigosPostales: [],
+    secciones: [],
+  });
+
+  const [frmVisitante, setFrmVisitante] = useState({
+    showVisitanteNuevo: false,
+    showVisitanteExistente: false,
+  });
+
+  const [visitanteData, setVisitanteData] = useState({
+    id_visitante: generateID("DV"),
+    nombre: "",
+    a_paterno: "",
+    a_materno: "",
+    fecha_cumpleanos: "",
+    calle: "",
+    numero_interior: "",
+    numero_exterior: "",
+    id_colonia: "",
+    id_municipio: "",
+    id_estado: "",
+    id_cp: "",
+    id_seccion_electoral: "",
+    correo: "",
+    numero_celular: "",
+  });
+
+  const [visitaData, setVisitaData] = useState({
+    id_registro_visita: generateID("RV"),
+    id_recepcionista: "RU00001",
+    fecha_visita: "",
+    hora_visita: "",
+    id_visitante: "",
+    asunto: "",
+    observaciones: "",
+  });
 
   useEffect(() => {
-    const fetchData = async () => {
+    const cargarDatosIniciales = async () => {
       try {
         const [
           coloniasData,
@@ -42,16 +75,19 @@ const AddVisitas = () => {
           getCP(),
           getSecciones(),
         ]);
-        setColonias(coloniasData || []);
-        setMunicipios(municipiosData || []);
-        setEstados(estadosData || []);
-        setCodigosPostales(codigosPostalesData || []);
-        setSecciones(seccionesData || []);
+        setListas({
+          colonias: coloniasData || [],
+          municipios: municipiosData || [],
+          estados: estadosData || [],
+          codigosPostales: codigosPostalesData || [],
+          secciones: seccionesData || [],
+        });
       } catch (error) {
         console.error("Error al cargar los datos:", error);
       }
     };
-    fetchData();
+
+    cargarDatosIniciales();
   }, []);
 
   useEffect(() => {
@@ -62,10 +98,29 @@ const AddVisitas = () => {
     const fechaFormateada = `${anio}-${mes}-${dia}`;
     const hora = now.toTimeString().split(" ")[0].slice(0, 5);
 
-    setFechaActual(fechaFormateada);
-    setHoraActual(hora);
+    setVisitaData((prev) => ({
+      ...prev,
+      fecha_visita: fechaFormateada,
+      hora_visita: hora,
+    }));
   }, []);
 
+  const guardarVisita = async () => {
+    const data = {
+      ...visitanteData,
+      ...visitaData,
+      id_visitante: visitanteData.id_visitante,
+    };
+
+    console.log("Datos que se enviarían:", JSON.stringify(data, null, 2));
+
+    try {
+      const respuesta = await agregarVisita(visitanteData, visitaData);
+      console.log("Visita agregada exitosamente", respuesta);
+    } catch (error) {
+      console.error("Error al agregar la visita", error);
+    }
+  };
   return (
     <>
       <div className="card">
@@ -75,6 +130,21 @@ const AddVisitas = () => {
           </h3>
         </div>
         <div className="card-body">
+          <div className="input-group mb-3">
+            <span className="input-group-text">id_rg_usuarios</span>
+            <input
+              type="text"
+              className="form-control"
+              value={visitaData.id_recepcionista}
+              onChange={(e) =>
+                setVisitaData((prev) => ({
+                  ...prev,
+                  id_recepcionista: e.target.value,
+                }))
+              }
+              readOnly
+            />
+          </div>
           <div className="row">
             <div className="col-md-2 mb-3">
               <label
@@ -87,7 +157,13 @@ const AddVisitas = () => {
                 type="date"
                 className="form-control"
                 id="fecha_visita"
-                value={fechaActual}
+                value={visitaData.fecha_visita}
+                onChange={(e) =>
+                  setVisitaData((prev) => ({
+                    ...prev,
+                    fecha_visita: e.target.value,
+                  }))
+                }
                 readOnly
               />
             </div>
@@ -102,7 +178,13 @@ const AddVisitas = () => {
                 type="time"
                 className="form-control"
                 id="hora_visita"
-                value={horaActual}
+                value={visitaData.hora_visita}
+                onChange={(e) =>
+                  setVisitaData((prev) => ({
+                    ...prev,
+                    hora_visita: e.target.value,
+                  }))
+                }
                 readOnly
               />
             </div>
@@ -114,8 +196,11 @@ const AddVisitas = () => {
                 type="button"
                 className="btn btn-info"
                 onClick={() => {
-                  setShowVisitanteNuevo(true);
-                  setShowVisitanteExistente(false);
+                  setFrmVisitante((prev) => ({
+                    ...prev,
+                    showVisitanteNuevo: true,
+                    showVisitanteExistente: false,
+                  }));
                 }}
               >
                 <FontAwesomeIcon icon={faUserPlus} /> Visitante Nuevo
@@ -126,8 +211,11 @@ const AddVisitas = () => {
                 type="button"
                 className="btn btn-warning"
                 onClick={() => {
-                  setShowVisitanteNuevo(false);
-                  setShowVisitanteExistente(true);
+                  setFrmVisitante((prev) => ({
+                    ...prev,
+                    showVisitanteNuevo: false,
+                    showVisitanteExistente: true,
+                  }));
                 }}
               >
                 <FontAwesomeIcon icon={faUserCheck} /> Visitante Existente
@@ -137,7 +225,7 @@ const AddVisitas = () => {
         </div>
       </div>
 
-      {showVisitanteNuevo && (
+      {frmVisitante.showVisitanteNuevo && (
         <div className="card mt-4">
           <div className="card-header">
             <h3>
@@ -145,6 +233,22 @@ const AddVisitas = () => {
             </h3>
           </div>
           <div className="card-body">
+            <div className="input-group mb-3">
+              <span className="input-group-text">id_visitante</span>
+              <input
+                type="text"
+                className="form-control"
+                id="id_visitante"
+                value={visitanteData.id_visitante}
+                onChange={(e) =>
+                  setVisitanteData((prev) => ({
+                    ...prev,
+                    id_visitante: e.target.value,
+                  }))
+                }
+                readOnly
+              />
+            </div>
             <div className="row">
               <div className="col-md-4 mb-3">
                 <label
@@ -157,6 +261,13 @@ const AddVisitas = () => {
                   type="text"
                   id="nombre_visit_new"
                   className="form-control"
+                  value={visitanteData.nombre}
+                  onChange={(e) =>
+                    setVisitanteData({
+                      ...visitanteData,
+                      nombre: e.target.value,
+                    })
+                  }
                 />
               </div>
               <div className="col-md-4 mb-3">
@@ -166,7 +277,18 @@ const AddVisitas = () => {
                 >
                   Apellido paterno
                 </label>
-                <input type="text" id="ap_visit_new" className="form-control" />
+                <input
+                  type="text"
+                  id="ap_visit_new"
+                  className="form-control"
+                  value={visitanteData.a_paterno}
+                  onChange={(e) =>
+                    setVisitanteData({
+                      ...visitanteData,
+                      a_paterno: e.target.value,
+                    })
+                  }
+                />
               </div>
               <div className="col-md-4 mb-3">
                 <label
@@ -175,9 +297,20 @@ const AddVisitas = () => {
                 >
                   Apellido materno
                 </label>
-                <input type="text" id="am_visit_new" className="form-control" />
+                <input
+                  type="text"
+                  id="am_visit_new"
+                  className="form-control"
+                  value={visitanteData.a_materno}
+                  onChange={(e) =>
+                    setVisitanteData({
+                      ...visitanteData,
+                      a_materno: e.target.value,
+                    })
+                  }
+                />
               </div>
-              <div className="col-md-12 mb-3">
+              <div className="col-md-8 mb-3">
                 <label
                   htmlFor="calle_visit_new"
                   className="form-label fw-bolder fs-7"
@@ -188,6 +321,13 @@ const AddVisitas = () => {
                   type="text"
                   id="calle_visit_new"
                   className="form-control"
+                  value={visitanteData.calle}
+                  onChange={(e) =>
+                    setVisitanteData({
+                      ...visitanteData,
+                      calle: e.target.value,
+                    })
+                  }
                 />
               </div>
               <div className="col-md-2 mb-3">
@@ -201,6 +341,13 @@ const AddVisitas = () => {
                   type="text"
                   id="num_ext_visit_new"
                   className="form-control"
+                  value={visitanteData.numero_exterior}
+                  onChange={(e) =>
+                    setVisitanteData({
+                      ...visitanteData,
+                      numero_exterior: e.target.value,
+                    })
+                  }
                 />
               </div>
               <div className="col-md-2 mb-3">
@@ -214,6 +361,13 @@ const AddVisitas = () => {
                   type="text"
                   id="num_int_visit_new"
                   className="form-control"
+                  value={visitanteData.numero_interior}
+                  onChange={(e) =>
+                    setVisitanteData({
+                      ...visitanteData,
+                      numero_interior: e.target.value,
+                    })
+                  }
                 />
               </div>
               <div className="col-md-4 mb-3">
@@ -226,16 +380,19 @@ const AddVisitas = () => {
                 <select
                   className="form-select"
                   id="colonia_visit_new"
-                  defaultValue=""
+                  value={visitanteData.id_colonia}
+                  onChange={(e) =>
+                    setVisitanteData((prev) => ({
+                      ...prev,
+                      id_colonia: e.target.value,
+                    }))
+                  }
                 >
                   <option disabled value="">
                     Seleccione una colonia
                   </option>
-                  {colonias.map((colonia) => (
-                    <option
-                      key={colonia.id_colonia}
-                      value={colonia.nombre_colonias}
-                    >
+                  {listas.colonias.map((colonia) => (
+                    <option key={colonia.id_colonia} value={colonia.id_colonia}>
                       {colonia.nombre_colonias}
                     </option>
                   ))}
@@ -251,15 +408,21 @@ const AddVisitas = () => {
                 <select
                   className="form-select"
                   id="municipio_visit_new"
-                  defaultValue=""
+                  value={visitanteData.id_municipio}
+                  onChange={(e) =>
+                    setVisitanteData((prev) => ({
+                      ...prev,
+                      id_municipio: e.target.value,
+                    }))
+                  }
                 >
                   <option disabled value="">
                     Seleccione un municipio
                   </option>
-                  {municipios.map((municipio) => (
+                  {listas.municipios.map((municipio) => (
                     <option
                       key={municipio.id_municipio}
-                      value={municipio.nombre_municipios}
+                      value={municipio.id_municipio}
                     >
                       {municipio.nombre_municipios}
                     </option>
@@ -276,39 +439,20 @@ const AddVisitas = () => {
                 <select
                   className="form-select"
                   id="estado_visit_new"
-                  defaultValue=""
+                  value={visitanteData.id_estado}
+                  onChange={(e) =>
+                    setVisitanteData((prev) => ({
+                      ...prev,
+                      id_estado: e.target.value,
+                    }))
+                  }
                 >
                   <option disabled value="">
                     Seleccione un estado
                   </option>
-                  {estados.map((estado) => (
-                    <option key={estado.id_estado} value={estado.nombre_estado}>
+                  {listas.estados.map((estado) => (
+                    <option key={estado.id_estado} value={estado.id_estado}>
                       {estado.nombre_estado}
-                    </option>
-                  ))}
-                </select>
-              </div>
-              <div className="col-md-2 mb-3">
-                <label
-                  htmlFor="seccion_visit_new"
-                  className="form-label fw-bolder fs-7"
-                >
-                  Sección electoral
-                </label>
-                <select
-                  className="form-select"
-                  id="seccion_visit_new"
-                  defaultValue=""
-                >
-                  <option disabled value="">
-                    Seleccione una seccion
-                  </option>
-                  {secciones.map((seccion) => (
-                    <option
-                      key={seccion.id_seccion_electoral}
-                      value={seccion.nombre_seccion}
-                    >
-                      {seccion.nombre_seccion}
                     </option>
                   ))}
                 </select>
@@ -323,22 +467,96 @@ const AddVisitas = () => {
                 <select
                   className="form-select"
                   id="cp_visit_new"
-                  defaultValue=""
+                  value={visitanteData.id_cp}
+                  onChange={(e) =>
+                    setVisitanteData((prev) => ({
+                      ...prev,
+                      id_cp: e.target.value,
+                    }))
+                  }
                 >
                   <option disabled value="">
                     Seleccione un codigo postal
                   </option>
-                  {codigosPostales.map((codigoPostal) => (
-                    <option
-                      key={codigoPostal.id_cp}
-                      value={codigoPostal.codigo_postal}
-                    >
+                  {listas.codigosPostales.map((codigoPostal) => (
+                    <option key={codigoPostal.id_cp} value={codigoPostal.id_cp}>
                       {codigoPostal.codigo_postal}
                     </option>
                   ))}
                 </select>
               </div>
+              <div className="col-md-2 mb-3">
+                <label
+                  htmlFor="seccion_visit_new"
+                  className="form-label fw-bolder fs-7"
+                >
+                  Sección electoral
+                </label>
+                <select
+                  className="form-select"
+                  id="seccion_visit_new"
+                  value={visitanteData.id_seccion_electoral}
+                  onChange={(e) =>
+                    setVisitanteData((prev) => ({
+                      ...prev,
+                      id_seccion_electoral: e.target.value,
+                    }))
+                  }
+                >
+                  <option disabled value="">
+                    Seleccione una seccion
+                  </option>
+                  {listas.secciones.map((seccion) => (
+                    <option
+                      key={seccion.id_seccion_electoral}
+                      value={seccion.id_seccion_electoral}
+                    >
+                      {seccion.nombre_seccion}
+                    </option>
+                  ))}
+                </select>
+              </div>
               <div className="col-md-3 mb-3">
+                <label
+                  htmlFor="celular_visit_new"
+                  className="form-label fw-bolder fs-7"
+                >
+                  Celular
+                </label>
+                <input
+                  type="phone"
+                  id="celular_visit_new"
+                  className="form-control"
+                  value={visitanteData.numero_celular}
+                  onChange={(e) =>
+                    setVisitanteData({
+                      ...visitanteData,
+                      numero_celular: e.target.value,
+                    })
+                  }
+                />
+              </div>
+              <div className="col-md-3 mb-3">
+                <label
+                  htmlFor="correo_visit_new"
+                  className="form-label fw-bolder fs-7"
+                >
+                  Correo
+                </label>
+                <input
+                  type="mail"
+                  id="correo_visit_new"
+                  className="form-control"
+                  value={visitanteData.correo}
+                  onChange={(e) =>
+                    setVisitanteData({
+                      ...visitanteData,
+                      correo: e.target.value,
+                    })
+                  }
+                />
+              </div>
+              <div className="col-md-2 mb-3">
                 <label
                   htmlFor="cumpleanos_visit_new"
                   className="form-label fw-bolder fs-7"
@@ -349,6 +567,13 @@ const AddVisitas = () => {
                   type="date"
                   id="cumpleanos_visit_new"
                   className="form-control"
+                  value={visitanteData.fecha_cumpleanos}
+                  onChange={(e) =>
+                    setVisitanteData({
+                      ...visitanteData,
+                      fecha_cumpleanos: e.target.value,
+                    })
+                  }
                 />
               </div>
               <div className="col-md-12 mb-3">
@@ -362,6 +587,10 @@ const AddVisitas = () => {
                   id="asunto_visit_new"
                   className="form-control"
                   rows="2"
+                  value={visitaData.asunto}
+                  onChange={(e) =>
+                    setVisitaData({ ...visitaData, asunto: e.target.value })
+                  }
                 />
               </div>
               <div className="col-md-12 mb-3">
@@ -375,6 +604,13 @@ const AddVisitas = () => {
                   id="observaciones_visit_new"
                   className="form-control"
                   rows="4"
+                  value={visitaData.observaciones}
+                  onChange={(e) =>
+                    setVisitaData({
+                      ...visitaData,
+                      observaciones: e.target.value,
+                    })
+                  }
                 />
               </div>
             </div>
@@ -382,7 +618,7 @@ const AddVisitas = () => {
         </div>
       )}
 
-      {showVisitanteExistente && (
+      {frmVisitante.showVisitanteExistente && (
         <div className="card mt-4">
           <div className="card-header">
             <h3>
@@ -430,7 +666,7 @@ const AddVisitas = () => {
                   className="form-control"
                 />
               </div>
-              <div className="col-md-12 mb-3">
+              <div className="col-md-10 mb-3">
                 <label
                   htmlFor="calle_visit_exist"
                   className="form-label fw-bolder fs-7"
@@ -584,7 +820,11 @@ const AddVisitas = () => {
         <div className="card-body">
           <div className="d-flex justify-content-around align-items-center">
             <div className="mt-4 mb-2">
-              <button type="button" className="btn btn-success">
+              <button
+                type="button"
+                className="btn btn-success"
+                onClick={guardarVisita}
+              >
                 <FontAwesomeIcon icon={faFloppyDisk} /> Guardar
               </button>
             </div>
