@@ -19,6 +19,7 @@ import { agregarVisita } from "../../services/visitasAdd";
 import { getFilteredVisitas } from "../../services/visitasFilter";
 import FechaHora from "../../utilities/fechaHora";
 import FechaHoraActual from "../../utilities/fechaHoraActual";
+import InputIdRegistroVisita from "../../utilities/inputIdRegistroVisita";
 
 const AddVisitas = () => {
   const [listas, setListas] = useState({
@@ -36,14 +37,6 @@ const AddVisitas = () => {
     am_visitante: "",
   });
 
-  const [visitaData, setVisitaData] = useState({
-    id_registro_visita: generateID("RV"),
-    id_recepcionista: "RU00001",
-    id_visitante: "",
-    asunto: "",
-    observaciones: "",
-  });
-
   const fecha_visita = useMemo(
     () => new Date().toISOString().split("T")[0],
     []
@@ -51,17 +44,45 @@ const AddVisitas = () => {
 
   const hora_visita = useMemo(() => new Date().toTimeString().slice(0, 5), []);
 
-  const InputIdRegistroVisita = () => (
-    <div className="input-group mb-3">
-      <span className="input-group-text">id_registro_visita</span>
-      <input
-        type="text"
-        className="form-control"
-        value={visitaData.id_registro_visita}
-        readOnly
-      />
-    </div>
-  );
+  const [visitaData, setVisitaData] = useState({
+    id_registro_visita: generateID("RV"),
+    id_visitante: "",
+    id_recepcionista: "RU00001",
+    fecha_visita: fecha_visita,
+    hora_visita: hora_visita,
+    asunto: "",
+    observaciones: "",
+  });
+
+  const [asunto, setAsunto] = useState("");
+  const [observaciones, setObservaciones] = useState("");
+
+  const buscarVisitante = async () => {
+    try {
+      const response = await getFilteredVisitas(filters);
+      setFilteredVisitas(response || []);
+
+      setVisitanteStatus(response?.length > 0 ? "existente" : "nuevo");
+    } catch (error) {
+      console.error("Error al buscar el visitante", error);
+    }
+  };
+
+  const guardarVisita = async () => {
+    const data = {
+      ...visitaData,
+      id_visitante: filteredVisitas[0]?.id_visitante || "",
+      asunto: asunto,
+      observaciones: observaciones,
+    };
+    console.log("Datos que se enviarían:", JSON.stringify(data, null, 2));
+    // try {
+    //   const respuesta = await agregarVisita(data);
+    //   console.log("Visita agregada exitosamente", respuesta);
+    // } catch (error) {
+    //   console.error("Error al agregar la visita", error);
+    // }
+  };
 
   useEffect(() => {
     (async () => {
@@ -86,17 +107,6 @@ const AddVisitas = () => {
       }
     })();
   }, []);
-
-  const buscarVisitante = async () => {
-    try {
-      const response = await getFilteredVisitas(filters);
-      setFilteredVisitas(response || []);
-
-      setVisitanteStatus(response?.length > 0 ? "existente" : "nuevo");
-    } catch (error) {
-      console.error("Error al buscar el visitante", error);
-    }
-  };
 
   return (
     <>
@@ -259,14 +269,22 @@ const AddVisitas = () => {
               <h5 className="fw-bolder">Agregar visitas</h5>
             </div>
             <div className="card-body">
-              <InputIdRegistroVisita />
+              <InputIdRegistroVisita
+                id_registro_visita={visitaData.id_registro_visita}
+              />
               <FechaHoraActual fecha={fecha_visita} hora={hora_visita} />
               <div className="row">
                 <div className="col-md-12 mb-3">
                   <label htmlFor="asunto" className="form-label fw-bolder fs-7">
                     Asunto
                   </label>
-                  <textarea id="asunto" className="form-control" rows="2" />
+                  <textarea
+                    id="asunto"
+                    className="form-control"
+                    rows="2"
+                    value={asunto}
+                    onChange={(e) => setAsunto(e.target.value)}
+                  />
                 </div>
                 <div className="col-md-12 mb-3">
                   <label
@@ -279,6 +297,8 @@ const AddVisitas = () => {
                     id="observaciones"
                     className="form-control"
                     rows="4"
+                    value={observaciones}
+                    onChange={(e) => setObservaciones(e.target.value)}
                   />
                 </div>
               </div>
@@ -293,7 +313,9 @@ const AddVisitas = () => {
             <h5 className="fw-bolder">Registro de visitas</h5>
           </div>
           <div className="card-body">
-            <InputIdRegistroVisita />
+            <InputIdRegistroVisita
+              id_registro_visita={visitaData.id_registro_visita}
+            />
             <FechaHoraActual fecha={fecha_visita} hora={hora_visita} />
           </div>
         </div>
@@ -304,7 +326,11 @@ const AddVisitas = () => {
           <div className="card-body">
             <div className="d-flex justify-content-around align-items-center">
               <div className="mt-4 mb-2">
-                <button type="button" className="btn btn-success">
+                <button
+                  type="button"
+                  className="btn btn-success"
+                  onClick={guardarVisita}
+                >
                   <FontAwesomeIcon icon={faFloppyDisk} /> Guardar
                 </button>
               </div>
