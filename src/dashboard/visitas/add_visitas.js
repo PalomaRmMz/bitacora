@@ -44,9 +44,33 @@ const AddVisitas = () => {
 
   const hora_visita = useMemo(() => new Date().toTimeString().slice(0, 5), []);
 
-  const [visitaData, setVisitaData] = useState({
+  const [visitanteExistenteData, setVisitanteExistenteData] = useState({
     id_registro_visita: generateID("RV"),
     id_visitante: "",
+    id_recepcionista: "RU00001",
+    fecha_visita: fecha_visita,
+    hora_visita: hora_visita,
+    asunto: "",
+    observaciones: "",
+  });
+
+  const [visitanteNuevoData, setVisitanteNuevoData] = useState({
+    id_visitante: generateID("DV"),
+    nombre: "",
+    a_paterno: "",
+    a_materno: "",
+    fecha_cumpleanos: "",
+    calle: "",
+    numero_interior: "",
+    numero_exterior: "",
+    id_colonia: "",
+    id_municipio: "",
+    id_estado: "",
+    id_cp: "",
+    id_seccion_electoral: "",
+    correo: "",
+    numero_celular: "",
+    id_registro_visita: generateID("RV"),
     id_recepcionista: "RU00001",
     fecha_visita: fecha_visita,
     hora_visita: hora_visita,
@@ -69,19 +93,51 @@ const AddVisitas = () => {
   };
 
   const guardarVisita = async () => {
-    const data = {
-      ...visitaData,
-      id_visitante: filteredVisitas[0]?.id_visitante || "",
-      asunto: asunto,
-      observaciones: observaciones,
-    };
-    console.log("Datos que se enviarían:", JSON.stringify(data, null, 2));
-    // try {
-    //   const respuesta = await agregarVisita(data);
-    //   console.log("Visita agregada exitosamente", respuesta);
-    // } catch (error) {
-    //   console.error("Error al agregar la visita", error);
-    // }
+    let visitanteData = {};
+    let visitaData = null;
+
+    if (visitanteStatus === "nuevo") {
+      visitanteData = { ...visitanteNuevoData };
+
+      visitaData = {
+        id_registro_visita: visitanteNuevoData.id_registro_visita,
+        id_visitante: visitanteNuevoData.id_visitante,
+        id_recepcionista: visitanteNuevoData.id_recepcionista,
+        fecha_visita: visitanteNuevoData.fecha_visita,
+        hora_visita: visitanteNuevoData.hora_visita,
+        asunto: asunto,
+        observaciones: observaciones,
+      };
+    } else if (visitanteStatus === "existente") {
+      const idVisitante = filteredVisitas[0]?.id_visitante || null;
+
+      if (!idVisitante) {
+        console.error(
+          "Error: id_visitante no encontrado en visitante existente."
+        );
+        return;
+      }
+
+      visitanteData = {};
+      visitaData = {
+        ...visitanteExistenteData,
+        id_visitante: idVisitante,
+        asunto: asunto,
+        observaciones: observaciones,
+      };
+    }
+
+    console.log(
+      "Datos que se enviarán:",
+      JSON.stringify({ visitanteData, visitaData }, null, 2)
+    );
+
+    try {
+      const respuesta = await agregarVisita(visitanteData, visitaData);
+      console.log("Visita agregada exitosamente", respuesta);
+    } catch (error) {
+      console.error("Error al agregar la visita", error);
+    }
   };
 
   useEffect(() => {
@@ -122,7 +178,7 @@ const AddVisitas = () => {
             <input
               type="text"
               className="form-control"
-              value={visitaData.id_recepcionista}
+              value={visitanteExistenteData.id_recepcionista}
               readOnly
             />
           </div>
@@ -270,7 +326,7 @@ const AddVisitas = () => {
             </div>
             <div className="card-body">
               <InputIdRegistroVisita
-                id_registro_visita={visitaData.id_registro_visita}
+                id_registro_visita={visitanteExistenteData.id_registro_visita}
               />
               <FechaHoraActual fecha={fecha_visita} hora={hora_visita} />
               <div className="row">
@@ -314,7 +370,7 @@ const AddVisitas = () => {
           </div>
           <div className="card-body">
             <InputIdRegistroVisita
-              id_registro_visita={visitaData.id_registro_visita}
+              id_registro_visita={visitanteExistenteData.id_registro_visita}
             />
             <FechaHoraActual fecha={fecha_visita} hora={hora_visita} />
           </div>
