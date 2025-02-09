@@ -47,10 +47,10 @@ const AddVisitas = () => {
 
   const [visitanteExistenteData, setVisitanteExistenteData] = useState({
     id_registro_visita: generateID("RV"),
-    id_visitante: "",
     id_recepcionista: "RU00001",
     fecha_visita,
     hora_visita,
+    id_visitante: "",
     asunto: "",
     observaciones: "",
   });
@@ -71,12 +71,6 @@ const AddVisitas = () => {
     id_seccion_electoral: "",
     correo: "",
     numero_celular: "",
-    id_registro_visita: generateID("RV"),
-    id_recepcionista: "RU00001",
-    fecha_visita,
-    hora_visita,
-    asunto: "",
-    observaciones: "",
   });
 
   const [asunto, setAsunto] = useState("");
@@ -97,14 +91,16 @@ const AddVisitas = () => {
     let visitaData = null;
 
     if (visitanteStatus === "nuevo") {
+      const idVisitante = visitanteNuevoData.id_visitante;
       visitanteData = { ...visitanteNuevoData };
       visitaData = {
-        ...visitanteNuevoData,
+        ...visitanteExistenteData,
+        id_visitante: idVisitante,
         asunto,
         observaciones,
       };
     } else if (visitanteStatus === "existente") {
-      const idVisitante = filteredVisitas[0]?.id_visitante || null;
+      const idVisitante = filteredVisitas[0]?.id_visitante;
       if (!idVisitante) {
         console.error(
           "Error: id_visitante no encontrado en visitante existente."
@@ -341,6 +337,15 @@ const AddVisitas = () => {
             <InputIdRegistroVisita
               id_registro_visita={visitanteExistenteData.id_registro_visita}
             />
+            <div className="input-group mb-3">
+              <span className="input-group-text">id_visitante</span>
+              <input
+                type="text"
+                className="form-control"
+                value={visitanteNuevoData.id_visitante}
+                readOnly
+              />
+            </div>
             <FechaHoraActual fecha={fecha_visita} hora={hora_visita} />
             <TextAreaAsuntoObservaciones
               asunto={asunto}
