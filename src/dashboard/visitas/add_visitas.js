@@ -60,17 +60,17 @@ const AddVisitas = () => {
     nombre: "Pedro",
     a_paterno: "Picapiedra",
     a_materno: "Dinosaurio",
-    fecha_cumpleanos: "1990-01-01",
-    calle: "conocida",
-    numero_interior: "1",
-    numero_exterior: "1",
+    fecha_cumpleanos: "",
+    calle: "",
+    numero_interior: "",
+    numero_exterior: "",
     id_colonia: "",
     id_municipio: "",
     id_estado: "",
     id_cp: "",
     id_seccion_electoral: "",
-    correo: "juanperez@gmail.com",
-    numero_celular: "1234567890",
+    correo: "",
+    numero_celular: "",
   });
 
   const [asunto, setAsunto] = useState("");
@@ -348,6 +348,68 @@ const AddVisitas = () => {
             </div>
             <FechaHoraActual fecha={fecha_visita} hora={hora_visita} />
             <div className="row">
+              {/*  */}
+              <div className="col-md-8 mb-3">
+                <label
+                  htmlFor="calle_visit_new"
+                  className="form-label fw-bolder fs-7"
+                >
+                  Calle
+                </label>
+                <input
+                  type="text"
+                  id="calle_visit_new"
+                  className="form-control"
+                  value={visitanteNuevoData.calle}
+                  onChange={(e) =>
+                    setVisitanteNuevoData({
+                      ...visitanteNuevoData,
+                      calle: e.target.value,
+                    })
+                  }
+                />
+              </div>
+              <div className="col-md-2 mb-3">
+                <label
+                  htmlFor="num_ext_visit_new"
+                  className="form-label fw-bolder fs-7"
+                >
+                  Número exterior
+                </label>
+                <input
+                  type="text"
+                  id="num_ext_visit_new"
+                  className="form-control"
+                  value={visitanteNuevoData.numero_exterior}
+                  onChange={(e) =>
+                    setVisitanteNuevoData({
+                      ...visitanteNuevoData,
+                      numero_exterior: e.target.value,
+                    })
+                  }
+                />
+              </div>
+              <div className="col-md-2 mb-3">
+                <label
+                  htmlFor="num_int_visit_new"
+                  className="form-label fw-bolder fs-7"
+                >
+                  Número interior
+                </label>
+                <input
+                  type="text"
+                  id="num_int_visit_new"
+                  className="form-control"
+                  value={visitanteNuevoData.numero_interior}
+                  onChange={(e) =>
+                    setVisitanteNuevoData({
+                      ...visitanteNuevoData,
+                      numero_interior: e.target.value,
+                    })
+                  }
+                />
+              </div>
+              {/*  */}
               <div className="col-md-4 mb-3">
                 <label
                   htmlFor="colonia_visit_new"
@@ -494,6 +556,66 @@ const AddVisitas = () => {
                     </option>
                   ))}
                 </select>
+              </div>
+              <div className="col-md-3 mb-3">
+                <label
+                  htmlFor="celular_visit_new"
+                  className="form-label fw-bolder fs-7"
+                >
+                  Celular
+                </label>
+                <input
+                  type="phone"
+                  id="celular_visit_new"
+                  className="form-control"
+                  value={visitanteNuevoData.numero_celular}
+                  onChange={(e) =>
+                    setVisitanteNuevoData({
+                      ...visitanteNuevoData,
+                      numero_celular: e.target.value,
+                    })
+                  }
+                />
+              </div>
+              <div className="col-md-3 mb-3">
+                <label
+                  htmlFor="correo_visit_new"
+                  className="form-label fw-bolder fs-7"
+                >
+                  Correo
+                </label>
+                <input
+                  type="mail"
+                  id="correo_visit_new"
+                  className="form-control"
+                  value={visitanteNuevoData.correo}
+                  onChange={(e) =>
+                    setVisitanteNuevoData({
+                      ...visitanteNuevoData,
+                      correo: e.target.value,
+                    })
+                  }
+                />
+              </div>
+              <div className="col-md-2 mb-3">
+                <label
+                  htmlFor="cumpleanos_visit_new"
+                  className="form-label fw-bolder fs-7"
+                >
+                  Cumpleaños
+                </label>
+                <input
+                  type="date"
+                  id="cumpleanos_visit_new"
+                  className="form-control"
+                  value={visitanteNuevoData.fecha_cumpleanos}
+                  onChange={(e) =>
+                    setVisitanteNuevoData({
+                      ...visitanteNuevoData,
+                      fecha_cumpleanos: e.target.value,
+                    })
+                  }
+                />
               </div>
               {/*  */}
               <TextAreaAsuntoObservaciones
