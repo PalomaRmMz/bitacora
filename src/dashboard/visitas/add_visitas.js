@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faSearch,
@@ -29,8 +29,7 @@ const AddVisitas = () => {
     secciones: [],
   });
   const [filteredVisitas, setFilteredVisitas] = useState([]);
-  const [visitanteExistente, setVistanteExistente] = useState(false);
-  const [visitanteNuevo, setVistanteNuevo] = useState(false);
+  const [visitanteStatus, setVisitanteStatus] = useState("none");
   const [filters, setFilters] = useState({
     nombre_visitante: "",
     ap_visitante: "",
@@ -40,33 +39,47 @@ const AddVisitas = () => {
   const [visitaData, setVisitaData] = useState({
     id_registro_visita: generateID("RV"),
     id_recepcionista: "RU00001",
-    // fecha_visita: new Date().toISOString().split("T")[0],
-    // hora_visita: new Date().toTimeString().slice(0, 5),
     id_visitante: "",
     asunto: "",
     observaciones: "",
   });
 
-  const fecha_visita = new Date().toISOString().split("T")[0];
-  const hora_visita = new Date().toTimeString().slice(0, 5);
+  const fecha_visita = useMemo(
+    () => new Date().toISOString().split("T")[0],
+    []
+  );
+
+  const hora_visita = useMemo(() => new Date().toTimeString().slice(0, 5), []);
+
+  const InputIdRegistroVisita = () => (
+    <div className="input-group mb-3">
+      <span className="input-group-text">id_registro_visita</span>
+      <input
+        type="text"
+        className="form-control"
+        value={visitaData.id_registro_visita}
+        readOnly
+      />
+    </div>
+  );
 
   useEffect(() => {
     (async () => {
       try {
-        const [colonias, municipios, estados, codigosPostales, secciones] =
-          await Promise.all([
-            getColonias(),
-            getMunicipios(),
-            getEstados(),
-            getCP(),
-            getSecciones(),
-          ]);
+        const data = await Promise.all([
+          getColonias(),
+          getMunicipios(),
+          getEstados(),
+          getCP(),
+          getSecciones(),
+        ]);
+
         setListas({
-          colonias,
-          municipios,
-          estados,
-          codigosPostales,
-          secciones,
+          colonias: data[0],
+          municipios: data[1],
+          estados: data[2],
+          codigosPostales: data[3],
+          secciones: data[4],
         });
       } catch (error) {
         console.error("Error al cargar los datos:", error);
@@ -78,13 +91,8 @@ const AddVisitas = () => {
     try {
       const response = await getFilteredVisitas(filters);
       setFilteredVisitas(response || []);
-      if (response && response.length > 0) {
-        setVistanteExistente(true);
-        setVistanteNuevo(false);
-      } else {
-        setVistanteExistente(false);
-        setVistanteNuevo(true);
-      }
+
+      setVisitanteStatus(response?.length > 0 ? "existente" : "nuevo");
     } catch (error) {
       console.error("Error al buscar el visitante", error);
     }
@@ -100,7 +108,7 @@ const AddVisitas = () => {
         </div>
         <div className="card-body">
           <div className="input-group mb-3">
-            <span className="input-group-text">id_ecepcionista</span>
+            <span className="input-group-text">id_recepcionista</span>
             <input
               type="text"
               className="form-control"
@@ -186,8 +194,7 @@ const AddVisitas = () => {
                   ap_visitante: "",
                   am_visitante: "",
                 });
-                setVistanteExistente(false);
-                setVistanteNuevo(false);
+                setVisitanteStatus("none");
               }}
             >
               <FontAwesomeIcon icon={faFilterCircleXmark} /> Limpiar
@@ -196,7 +203,7 @@ const AddVisitas = () => {
         </div>
       </div>
 
-      {visitanteExistente && (
+      {visitanteStatus === "existente" && (
         <>
           <div className="card mt-4">
             <div className="card-header">
@@ -252,6 +259,7 @@ const AddVisitas = () => {
               <h5 className="fw-bolder">Agregar visitas</h5>
             </div>
             <div className="card-body">
+              <InputIdRegistroVisita />
               <FechaHoraActual fecha={fecha_visita} hora={hora_visita} />
               <div className="row">
                 <div className="col-md-12 mb-3">
@@ -279,18 +287,19 @@ const AddVisitas = () => {
         </>
       )}
 
-      {visitanteNuevo && (
+      {visitanteStatus === "nuevo" && (
         <div className="card mt-4">
           <div className="card-header">
             <h5 className="fw-bolder">Registro de visitas</h5>
           </div>
           <div className="card-body">
+            <InputIdRegistroVisita />
             <FechaHoraActual fecha={fecha_visita} hora={hora_visita} />
           </div>
         </div>
       )}
 
-      {(visitanteExistente || visitanteNuevo) && (
+      {(visitanteStatus === "existente" || visitanteStatus === "nuevo") && (
         <div className="card mt-4">
           <div className="card-body">
             <div className="d-flex justify-content-around align-items-center">
@@ -309,8 +318,7 @@ const AddVisitas = () => {
                       ap_visitante: "",
                       am_visitante: "",
                     });
-                    setVistanteExistente(false);
-                    setVistanteNuevo(false);
+                    setVisitanteStatus("none");
                   }}
                 >
                   <FontAwesomeIcon icon={faXmark} /> Cancelar
