@@ -18,7 +18,7 @@ import {
 import { generateID } from "../../utilities/generateID";
 import { agregarVisita } from "../../services/visitasAdd";
 import { getFilteredVisitas } from "../../services/visitasFilter";
-import { applyFilters, clearFilters } from "../../utilities/filterVisitas";
+import FechaHora from "../../utilities/fechaHora";
 
 const AddVisitas = () => {
   const [listas, setListas] = useState({
@@ -28,14 +28,14 @@ const AddVisitas = () => {
     codigosPostales: [],
     secciones: [],
   });
-
   const [filteredVisitas, setFilteredVisitas] = useState([]);
+  const [showTable, setShowTable] = useState(false);
+
   const [filters, setFilters] = useState({
     nombre_visitante: "",
     ap_visitante: "",
     am_visitante: "",
   });
-
   const [visitanteData, setVisitanteData] = useState({
     id_visitante: generateID("DV"),
     nombre: "",
@@ -64,61 +64,42 @@ const AddVisitas = () => {
     observaciones: "",
   });
 
-  const [showTable, setShowTable] = useState(false);
-
-  const cargarDatosIniciales = async () => {
-    try {
-      const [
-        coloniasData,
-        municipiosData,
-        estadosData,
-        codigosPostalesData,
-        seccionesData,
-        visitasData,
-      ] = await Promise.all([
-        getColonias(),
-        getMunicipios(),
-        getEstados(),
-        getCP(),
-        getSecciones(),
-      ]);
-      setListas({
-        colonias: coloniasData || [],
-        municipios: municipiosData || [],
-        estados: estadosData || [],
-        codigosPostales: codigosPostalesData || [],
-        secciones: seccionesData || [],
-      });
-      setFilteredVisitas(visitasData || []);
-    } catch (error) {
-      console.error("Error al cargar los datos:", error);
-    }
-  };
-
   useEffect(() => {
+    const cargarDatosIniciales = async () => {
+      try {
+        const [colonias, municipios, estados, codigosPostales, secciones] =
+          await Promise.all([
+            getColonias(),
+            getMunicipios(),
+            getEstados(),
+            getCP(),
+            getSecciones(),
+          ]);
+        setListas({
+          colonias,
+          municipios,
+          estados,
+          codigosPostales,
+          secciones,
+        });
+      } catch (error) {
+        console.error("Error al cargar los datos:", error);
+      }
+    };
     cargarDatosIniciales();
-  }, []);
 
-  useEffect(() => {
     const now = new Date();
-    const dia = String(now.getDate()).padStart(2, "0");
-    const mes = String(now.getMonth() + 1).padStart(2, "0");
-    const anio = now.getFullYear();
-    const fechaFormateada = `${anio}-${mes}-${dia}`;
-    const hora = now.toTimeString().split(" ")[0].slice(0, 5);
-
     setVisitaData((prev) => ({
       ...prev,
-      fecha_visita: fechaFormateada,
-      hora_visita: hora,
+      fecha_visita: now.toISOString().split("T")[0],
+      hora_visita: now.toTimeString().slice(0, 5),
     }));
   }, []);
 
   const buscarVisitante = async () => {
     try {
       const response = await getFilteredVisitas(filters);
-      const jsonResponse = JSON.parse(JSON.stringify(response));
-      setFilteredVisitas(jsonResponse || []);
+      setFilteredVisitas(response || []);
       setShowTable(true);
     } catch (error) {
       console.error("Error al buscar el visitante", error);
@@ -126,14 +107,9 @@ const AddVisitas = () => {
   };
 
   const guardarVisita = async () => {
-    const data = {
-      ...visitanteData,
-      ...visitaData,
-    };
-    console.log("Guardando visita con los siguientes datos:", data);
     try {
-      const respuesta = await agregarVisita(visitanteData, visitaData);
-      console.log("Visita agregada exitosamente", respuesta);
+      await agregarVisita(visitanteData, visitaData);
+      console.log("Visita agregada exitosamente");
     } catch (error) {
       console.error("Error al agregar la visita", error);
     }
@@ -149,7 +125,7 @@ const AddVisitas = () => {
         </div>
         <div className="card-body">
           <div className="input-group mb-3">
-            <span className="input-group-text">id_rg_usuarios</span>
+            <span className="input-group-text">ID Recepcionista</span>
             <input
               type="text"
               className="form-control"
@@ -157,11 +133,12 @@ const AddVisitas = () => {
               readOnly
             />
           </div>
+
           <div className="row">
             <div className="col-md-2 mb-3">
               <label
-                htmlFor="fecha_visita"
                 className="form-label fw-bolder fs-7"
+                htmlFor="fecha_visita"
               >
                 Fecha de visita
               </label>
@@ -175,8 +152,8 @@ const AddVisitas = () => {
             </div>
             <div className="col-md-2 mb-3">
               <label
-                htmlFor="hora_visita"
                 className="form-label fw-bolder fs-7"
+                htmlFor="hora_visita"
               >
                 Hora de visita
               </label>
@@ -189,88 +166,46 @@ const AddVisitas = () => {
               />
             </div>
           </div>
+
           <div className="row">
-            <div className="col-md-4 mb-3">
-              <label
-                htmlFor="nombre_visit_search"
-                className="form-label fw-bolder fs-7"
-              >
-                Nombre
-              </label>
-              <input
-                type="text"
-                id="nombre_visit_search"
-                className="form-control"
-                value={filters.nombre_visitante}
-                onChange={(e) =>
-                  setFilters({ ...filters, nombre_visitante: e.target.value })
-                }
-              />
-            </div>
-            <div className="col-md-4 mb-3">
-              <label
-                htmlFor="ap_visit_search"
-                className="form-label fw-bolder fs-7"
-              >
-                Apellido paterno
-              </label>
-              <input
-                type="text"
-                id="ap_visit_search"
-                className="form-control"
-                value={filters.ap_visitante}
-                onChange={(e) =>
-                  setFilters({
-                    ...filters,
-                    ap_visitante: e.target.value,
-                  })
-                }
-              />
-            </div>
-            <div className="col-md-4 mb-3">
-              <label
-                htmlFor="am_visit_search"
-                className="form-label fw-bolder fs-7"
-              >
-                Apellido materno
-              </label>
-              <input
-                type="text"
-                id="am_visit_search"
-                className="form-control"
-                value={filters.am_visitante}
-                onChange={(e) =>
-                  setFilters({
-                    ...filters,
-                    am_visitante: e.target.value,
-                  })
-                }
-              />
-            </div>
+            {Object.keys(filters).map((key, index) => (
+              <div className="col-md-4 mb-3" key={index}>
+                <label className="form-label fw-bolder fs-7">
+                  {key.replace(/_/g, " ")}
+                </label>
+                <input
+                  type="text"
+                  className="form-control"
+                  value={filters[key]}
+                  onChange={(e) =>
+                    setFilters({ ...filters, [key]: e.target.value })
+                  }
+                />
+              </div>
+            ))}
           </div>
 
           <div className="d-flex justify-content-around align-items-center">
-            <div className="mt-4 mb-4">
-              <button
-                type="button"
-                className="btn btn-info"
-                onClick={() => {
-                  applyFilters(
-                    filters,
-                    getFilteredVisitas,
-                    setFilteredVisitas,
-                    setShowTable
-                  );
-                }}
-              >
-                <FontAwesomeIcon icon={faSearch} /> Buscar visitante
-              </button>
-            </div>
-            <div className="mt-4 mb-4">
-              <button type="button" className="btn btn-danger mt-4 mb-2">
-                <FontAwesomeIcon icon={faFilterCircleXmark} /> Limpiar
-              </button>
-            </div>
+            <button
+              type="button"
+              className="btn btn-info"
+              onClick={buscarVisitante}
+            >
+              <FontAwesomeIcon icon={faSearch} /> Buscar visitante
+            </button>
+            <button
+              type="button"
+              className="btn btn-danger"
+              onClick={() =>
+                setFilters({
+                  nombre_visitante: "",
+                  ap_visitante: "",
+                  am_visitante: "",
+                })
+              }
+            >
+              <FontAwesomeIcon icon={faFilterCircleXmark} /> Limpiar
+            </button>
           </div>
         </div>
       </div>
@@ -293,8 +228,12 @@ const AddVisitas = () => {
               <tbody>
                 {filteredVisitas.map((visita) => (
                   <tr key={visita.id_registro_visita}>
-                    <td>{visita.fecha_visita}</td>
-                    <td>{visita.hora_visita}</td>
+                    <td>
+                      <FechaHora valor={visita.fecha_visita} tipo="fecha" />
+                    </td>
+                    <td>
+                      <FechaHora valor={visita.hora_visita} tipo="hora" />
+                    </td>
                     <td>{visita.asunto}</td>
                     <td>{visita.observaciones}</td>
                   </tr>
@@ -304,27 +243,6 @@ const AddVisitas = () => {
           </div>
         </div>
       )}
-
-      <div className="card mt-4">
-        <div className="card-body">
-          <div className="d-flex justify-content-around align-items-center">
-            <div className="mt-4 mb-2">
-              <button
-                type="button"
-                className="btn btn-success"
-                onClick={guardarVisita}
-              >
-                <FontAwesomeIcon icon={faFloppyDisk} /> Guardar
-              </button>
-            </div>
-            <div className="mt-4 mb-2">
-              <button type="button" className="btn btn-danger">
-                <FontAwesomeIcon icon={faXmark} /> Cancelar
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
     </>
   );
 };
