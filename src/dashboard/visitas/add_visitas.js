@@ -1,4 +1,5 @@
 import React, { useEffect, useState, useMemo } from "react";
+import Swal from "sweetalert2";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faSearch,
@@ -127,11 +128,49 @@ const AddVisitas = () => {
       JSON.stringify({ visitanteData, visitaData }, null, 2)
     );
 
+    Swal.fire({
+      title: "¡Éxito!",
+      text: "Visita guardada correctamente.",
+      icon: "success",
+      confirmButtonText: "Aceptar",
+      customClass: {
+        confirmButton: "btn btn-success",
+        cancelButton: "btn btn-danger",
+      },
+      buttonsStyling: false,
+    }).then(() => {
+      window.location.href = "/visitas/admin_visitas";
+    });
+
     // try {
     //   const respuesta = await agregarVisita(visitanteData, visitaData);
     //   console.log("Visita agregada exitosamente", respuesta);
+    //   Swal.fire({
+    //     title: "¡Éxito!",
+    //     text: "Visita guardada correctamente.",
+    //     icon: "success",
+    //     confirmButtonText: "Aceptar",
+    //     customClass: {
+    //       confirmButton: "btn btn-success",
+    //       cancelButton: "btn btn-danger",
+    //     },
+    //     buttonsStyling: false,
+    //   }).then(() => {
+    //     window.location.href = "/visitas/admin_visitas";
+    //   });
     // } catch (error) {
     //   console.error("Error al agregar la visita", error);
+    //   Swal.fire({
+    //     title: "Error",
+    //     text: "Hubo un problema al guardar la visita. Inténtalo nuevamente.",
+    //     icon: "error",
+    //     confirmButtonText: "Aceptar",
+    //     customClass: {
+    //       confirmButton: "btn btn-success",
+    //       cancelButton: "btn btn-danger",
+    //     },
+    //     buttonsStyling: false,
+    //   });
     // }
   };
 
