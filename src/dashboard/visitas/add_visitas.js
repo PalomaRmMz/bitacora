@@ -45,7 +45,7 @@ const AddVisitas = () => {
   );
   const hora_visita = useMemo(() => new Date().toTimeString().slice(0, 5), []);
 
-  const [visitanteExistenteData, setVisitanteExistenteData] = useState({
+  const [visitanteExistenteData] = useState({
     id_registro_visita: generateID("RV"),
     id_recepcionista: "RU00001",
     fecha_visita,
@@ -57,9 +57,9 @@ const AddVisitas = () => {
 
   const [visitanteNuevoData, setVisitanteNuevoData] = useState({
     id_visitante: generateID("DV"),
-    nombre: "Pedro",
-    a_paterno: "Picapiedra",
-    a_materno: "Dinosaurio",
+    nombre: "",
+    a_paterno: "",
+    a_materno: "",
     fecha_cumpleanos: "",
     calle: "",
     numero_interior: "",
@@ -92,7 +92,12 @@ const AddVisitas = () => {
 
     if (visitanteStatus === "nuevo") {
       const idVisitante = visitanteNuevoData.id_visitante;
-      visitanteData = { ...visitanteNuevoData };
+      visitanteData = {
+        ...visitanteNuevoData,
+        nombre: filters.nombre_visitante,
+        a_paterno: filters.ap_visitante,
+        a_materno: filters.am_visitante,
+      };
       visitaData = {
         ...visitanteExistenteData,
         id_visitante: idVisitante,
@@ -120,12 +125,12 @@ const AddVisitas = () => {
       JSON.stringify({ visitanteData, visitaData }, null, 2)
     );
 
-    // try {
-    //   const respuesta = await agregarVisita(visitanteData, visitaData);
-    //   console.log("Visita agregada exitosamente", respuesta);
-    // } catch (error) {
-    //   console.error("Error al agregar la visita", error);
-    // }
+    try {
+      const respuesta = await agregarVisita(visitanteData, visitaData);
+      console.log("Visita agregada exitosamente", respuesta);
+    } catch (error) {
+      console.error("Error al agregar la visita", error);
+    }
   };
 
   useEffect(() => {
