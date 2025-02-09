@@ -64,11 +64,11 @@ const AddVisitas = () => {
     calle: "conocida",
     numero_interior: "1",
     numero_exterior: "1",
-    id_colonia: "CC01234",
-    id_municipio: "CM01234",
-    id_estado: "CE00001",
-    id_cp: "CP02480",
-    id_seccion_electoral: "CS13580",
+    id_colonia: "",
+    id_municipio: "",
+    id_estado: "",
+    id_cp: "",
+    id_seccion_electoral: "",
     correo: "juanperez@gmail.com",
     numero_celular: "1234567890",
   });
@@ -120,12 +120,12 @@ const AddVisitas = () => {
       JSON.stringify({ visitanteData, visitaData }, null, 2)
     );
 
-    try {
-      const respuesta = await agregarVisita(visitanteData, visitaData);
-      console.log("Visita agregada exitosamente", respuesta);
-    } catch (error) {
-      console.error("Error al agregar la visita", error);
-    }
+    // try {
+    //   const respuesta = await agregarVisita(visitanteData, visitaData);
+    //   console.log("Visita agregada exitosamente", respuesta);
+    // } catch (error) {
+    //   console.error("Error al agregar la visita", error);
+    // }
   };
 
   useEffect(() => {
@@ -347,12 +347,162 @@ const AddVisitas = () => {
               />
             </div>
             <FechaHoraActual fecha={fecha_visita} hora={hora_visita} />
-            <TextAreaAsuntoObservaciones
-              asunto={asunto}
-              setAsunto={setAsunto}
-              observaciones={observaciones}
-              setObservaciones={setObservaciones}
-            />
+            <div className="row">
+              <div className="col-md-4 mb-3">
+                <label
+                  htmlFor="colonia_visit_new"
+                  className="form-label fw-bolder fs-7"
+                >
+                  Colonia
+                </label>
+                <select
+                  className="form-select"
+                  id="colonia_visit_new"
+                  value={visitanteNuevoData.id_colonia}
+                  onChange={(e) =>
+                    setVisitanteNuevoData((prev) => ({
+                      ...prev,
+                      id_colonia: e.target.value,
+                    }))
+                  }
+                >
+                  <option disabled value="">
+                    Seleccione una colonia
+                  </option>
+                  {listas.colonias.map((colonia) => (
+                    <option key={colonia.id_colonia} value={colonia.id_colonia}>
+                      {colonia.nombre_colonias}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              {/*  */}
+              <div className="col-md-4 mb-3">
+                <label
+                  htmlFor="municipio_visit_exist"
+                  className="form-label fw-bolder fs-7"
+                >
+                  Municipio
+                </label>
+                <select
+                  className="form-select"
+                  id="municipio_visit_exist"
+                  value={visitanteNuevoData.id_municipio}
+                  onChange={(e) =>
+                    setVisitanteNuevoData((prev) => ({
+                      ...prev,
+                      id_municipio: e.target.value,
+                    }))
+                  }
+                >
+                  <option disabled value="">
+                    Seleccione un municipio
+                  </option>
+                  {listas.municipios.map((municipio) => (
+                    <option
+                      key={municipio.id_municipio}
+                      value={municipio.id_municipio}
+                    >
+                      {municipio.nombre_municipios}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              <div className="col-md-4 mb-3">
+                <label
+                  htmlFor="estado_visit_exist"
+                  className="form-label fw-bolder fs-7"
+                >
+                  Estado
+                </label>
+                <select
+                  className="form-select"
+                  id="estado_visit_exist"
+                  value={visitanteNuevoData.id_estado}
+                  onChange={(e) =>
+                    setVisitanteNuevoData((prev) => ({
+                      ...prev,
+                      id_estado: e.target.value,
+                    }))
+                  }
+                >
+                  <option disabled value="">
+                    Seleccione un estado
+                  </option>
+                  {listas.estados.map((estado) => (
+                    <option key={estado.id_estado} value={estado.id_estado}>
+                      {estado.nombre_estado}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              <div className="col-md-2 mb-3">
+                <label
+                  htmlFor="cp_visit_new"
+                  className="form-label fw-bolder fs-7"
+                >
+                  Codigo postal
+                </label>
+                <select
+                  className="form-select"
+                  id="cp_visit_new"
+                  value={visitanteNuevoData.id_cp}
+                  onChange={(e) =>
+                    setVisitanteNuevoData((prev) => ({
+                      ...prev,
+                      id_cp: e.target.value,
+                    }))
+                  }
+                >
+                  <option disabled value="">
+                    Seleccione un codigo postal
+                  </option>
+                  {listas.codigosPostales.map((codigoPostal) => (
+                    <option key={codigoPostal.id_cp} value={codigoPostal.id_cp}>
+                      {codigoPostal.codigo_postal}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              <div className="col-md-2 mb-3">
+                <label
+                  htmlFor="seccion_visit_new"
+                  className="form-label fw-bolder fs-7"
+                >
+                  Sección electoral
+                </label>
+                <select
+                  className="form-select"
+                  id="seccion_visit_new"
+                  value={visitanteNuevoData.id_seccion_electoral}
+                  onChange={(e) =>
+                    setVisitanteNuevoData((prev) => ({
+                      ...prev,
+                      id_seccion_electoral: e.target.value,
+                    }))
+                  }
+                >
+                  <option disabled value="">
+                    Seleccione una seccion
+                  </option>
+                  {listas.secciones.map((seccion) => (
+                    <option
+                      key={seccion.id_seccion_electoral}
+                      value={seccion.id_seccion_electoral}
+                    >
+                      {seccion.nombre_seccion}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              {/*  */}
+              <TextAreaAsuntoObservaciones
+                asunto={asunto}
+                setAsunto={setAsunto}
+                observaciones={observaciones}
+                setObservaciones={setObservaciones}
+              />
+            </div>
           </div>
         </div>
       )}
