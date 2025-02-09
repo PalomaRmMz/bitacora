@@ -690,7 +690,36 @@ const AddVisitas = () => {
                 <button
                   type="button"
                   className="btn btn-success"
-                  onClick={guardarVisita}
+                  onClick={() => {
+                    guardarVisita();
+
+                    setFilters({
+                      nombre_visitante: "",
+                      ap_visitante: "",
+                      am_visitante: "",
+                    });
+
+                    setVisitanteNuevoData({
+                      ...visitanteNuevoData,
+                      fecha_cumpleanos: "",
+                      calle: "",
+                      numero_interior: "",
+                      numero_exterior: "",
+                      id_colonia: "",
+                      id_municipio: "",
+                      id_estado: "",
+                      id_cp: "",
+                      id_seccion_electoral: "",
+                      correo: "",
+                      numero_celular: "",
+                    });
+
+                    setAsunto("");
+                    setObservaciones("");
+
+                    setVisitanteStatus("none");
+                    setInputsReadOnly(false);
+                  }}
                 >
                   <FontAwesomeIcon icon={faFloppyDisk} /> Guardar
                 </button>
@@ -705,7 +734,27 @@ const AddVisitas = () => {
                       ap_visitante: "",
                       am_visitante: "",
                     });
+
+                    setVisitanteNuevoData({
+                      ...visitanteNuevoData,
+                      fecha_cumpleanos: "",
+                      calle: "",
+                      numero_interior: "",
+                      numero_exterior: "",
+                      id_colonia: "",
+                      id_municipio: "",
+                      id_estado: "",
+                      id_cp: "",
+                      id_seccion_electoral: "",
+                      correo: "",
+                      numero_celular: "",
+                    });
+
+                    setAsunto("");
+                    setObservaciones("");
+
                     setVisitanteStatus("none");
+                    setInputsReadOnly(false);
                   }}
                 >
                   <FontAwesomeIcon icon={faXmark} /> Cancelar
