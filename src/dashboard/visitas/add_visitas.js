@@ -20,6 +20,7 @@ import { getFilteredVisitas } from "../../services/visitasFilter";
 import FechaHora from "../../utilities/fechaHora";
 import FechaHoraActual from "../../utilities/fechaHoraActual";
 import InputIdRegistroVisita from "../../utilities/inputIdRegistroVisita";
+import TextAreaAsuntoObservaciones from "../../utilities/textAreaAsuntoObservaciones";
 
 const AddVisitas = () => {
   const [listas, setListas] = useState({
@@ -29,6 +30,7 @@ const AddVisitas = () => {
     codigosPostales: [],
     secciones: [],
   });
+
   const [filteredVisitas, setFilteredVisitas] = useState([]);
   const [visitanteStatus, setVisitanteStatus] = useState("none");
   const [filters, setFilters] = useState({
@@ -41,15 +43,14 @@ const AddVisitas = () => {
     () => new Date().toISOString().split("T")[0],
     []
   );
-
   const hora_visita = useMemo(() => new Date().toTimeString().slice(0, 5), []);
 
   const [visitanteExistenteData, setVisitanteExistenteData] = useState({
     id_registro_visita: generateID("RV"),
     id_visitante: "",
     id_recepcionista: "RU00001",
-    fecha_visita: fecha_visita,
-    hora_visita: hora_visita,
+    fecha_visita,
+    hora_visita,
     asunto: "",
     observaciones: "",
   });
@@ -72,8 +73,8 @@ const AddVisitas = () => {
     numero_celular: "",
     id_registro_visita: generateID("RV"),
     id_recepcionista: "RU00001",
-    fecha_visita: fecha_visita,
-    hora_visita: hora_visita,
+    fecha_visita,
+    hora_visita,
     asunto: "",
     observaciones: "",
   });
@@ -85,7 +86,6 @@ const AddVisitas = () => {
     try {
       const response = await getFilteredVisitas(filters);
       setFilteredVisitas(response || []);
-
       setVisitanteStatus(response?.length > 0 ? "existente" : "nuevo");
     } catch (error) {
       console.error("Error al buscar el visitante", error);
@@ -98,32 +98,24 @@ const AddVisitas = () => {
 
     if (visitanteStatus === "nuevo") {
       visitanteData = { ...visitanteNuevoData };
-
       visitaData = {
-        id_registro_visita: visitanteNuevoData.id_registro_visita,
-        id_visitante: visitanteNuevoData.id_visitante,
-        id_recepcionista: visitanteNuevoData.id_recepcionista,
-        fecha_visita: visitanteNuevoData.fecha_visita,
-        hora_visita: visitanteNuevoData.hora_visita,
-        asunto: asunto,
-        observaciones: observaciones,
+        ...visitanteNuevoData,
+        asunto,
+        observaciones,
       };
     } else if (visitanteStatus === "existente") {
       const idVisitante = filteredVisitas[0]?.id_visitante || null;
-
       if (!idVisitante) {
         console.error(
           "Error: id_visitante no encontrado en visitante existente."
         );
         return;
       }
-
-      visitanteData = {};
       visitaData = {
         ...visitanteExistenteData,
         id_visitante: idVisitante,
-        asunto: asunto,
-        observaciones: observaciones,
+        asunto,
+        observaciones,
       };
     }
 
@@ -329,35 +321,12 @@ const AddVisitas = () => {
                 id_registro_visita={visitanteExistenteData.id_registro_visita}
               />
               <FechaHoraActual fecha={fecha_visita} hora={hora_visita} />
-              <div className="row">
-                <div className="col-md-12 mb-3">
-                  <label htmlFor="asunto" className="form-label fw-bolder fs-7">
-                    Asunto
-                  </label>
-                  <textarea
-                    id="asunto"
-                    className="form-control"
-                    rows="2"
-                    value={asunto}
-                    onChange={(e) => setAsunto(e.target.value)}
-                  />
-                </div>
-                <div className="col-md-12 mb-3">
-                  <label
-                    htmlFor="observaciones"
-                    className="form-label fw-bolder fs-7"
-                  >
-                    Observaciones
-                  </label>
-                  <textarea
-                    id="observaciones"
-                    className="form-control"
-                    rows="4"
-                    value={observaciones}
-                    onChange={(e) => setObservaciones(e.target.value)}
-                  />
-                </div>
-              </div>
+              <TextAreaAsuntoObservaciones
+                asunto={asunto}
+                setAsunto={setAsunto}
+                observaciones={observaciones}
+                setObservaciones={setObservaciones}
+              />
             </div>
           </div>
         </>
@@ -373,6 +342,12 @@ const AddVisitas = () => {
               id_registro_visita={visitanteExistenteData.id_registro_visita}
             />
             <FechaHoraActual fecha={fecha_visita} hora={hora_visita} />
+            <TextAreaAsuntoObservaciones
+              asunto={asunto}
+              setAsunto={setAsunto}
+              observaciones={observaciones}
+              setObservaciones={setObservaciones}
+            />
           </div>
         </div>
       )}
