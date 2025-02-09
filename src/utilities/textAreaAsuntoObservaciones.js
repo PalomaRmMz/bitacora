@@ -7,7 +7,7 @@ const TextAreaAsuntoObservaciones = ({
   observaciones,
   setObservaciones,
 }) => (
-  <div className="row">
+  <div className="row was-validated">
     <div className="col-md-12 mb-3">
       <label htmlFor="asunto" className="form-label fw-bolder fs-7">
         Asunto
@@ -18,6 +18,7 @@ const TextAreaAsuntoObservaciones = ({
         rows="2"
         value={asunto}
         onChange={(e) => setAsunto(e.target.value)}
+        required
       />
     </div>
     <div className="col-md-12 mb-3">

@@ -73,6 +73,7 @@ const AddVisitas = () => {
     numero_celular: "",
   });
 
+  const [inputsReadOnly, setInputsReadOnly] = useState(false);
   const [asunto, setAsunto] = useState("");
   const [observaciones, setObservaciones] = useState("");
 
@@ -81,6 +82,7 @@ const AddVisitas = () => {
       const response = await getFilteredVisitas(filters);
       setFilteredVisitas(response || []);
       setVisitanteStatus(response?.length > 0 ? "existente" : "nuevo");
+      setInputsReadOnly(true);
     } catch (error) {
       console.error("Error al buscar el visitante", error);
     }
@@ -125,12 +127,12 @@ const AddVisitas = () => {
       JSON.stringify({ visitanteData, visitaData }, null, 2)
     );
 
-    try {
-      const respuesta = await agregarVisita(visitanteData, visitaData);
-      console.log("Visita agregada exitosamente", respuesta);
-    } catch (error) {
-      console.error("Error al agregar la visita", error);
-    }
+    // try {
+    //   const respuesta = await agregarVisita(visitanteData, visitaData);
+    //   console.log("Visita agregada exitosamente", respuesta);
+    // } catch (error) {
+    //   console.error("Error al agregar la visita", error);
+    // }
   };
 
   useEffect(() => {
@@ -176,7 +178,7 @@ const AddVisitas = () => {
             />
           </div>
 
-          <div className="row">
+          <div className="row was-validated">
             <div className="col-md-4 mb-3">
               <label
                 htmlFor="nombre_visit_search"
@@ -190,8 +192,15 @@ const AddVisitas = () => {
                 className="form-control"
                 value={filters.nombre_visitante}
                 onChange={(e) =>
-                  setFilters({ ...filters, nombre_visitante: e.target.value })
+                  setFilters({
+                    ...filters,
+                    nombre_visitante: e.target.value
+                      .replace(/[^a-zA-ZáéíóúÁÉÍÓÚüÜ\s]/g, "")
+                      .replace(/\b(\w)/g, (match) => match.toUpperCase()),
+                  })
                 }
+                readOnly={inputsReadOnly}
+                required
               />
             </div>
             <div className="col-md-4 mb-3">
@@ -209,9 +218,13 @@ const AddVisitas = () => {
                 onChange={(e) =>
                   setFilters({
                     ...filters,
-                    ap_visitante: e.target.value,
+                    ap_visitante: e.target.value
+                      .replace(/[^a-zA-ZáéíóúÁÉÍÓÚüÜ\s]/g, "")
+                      .replace(/\b(\w)/g, (match) => match.toUpperCase()),
                   })
                 }
+                readOnly={inputsReadOnly}
+                required
               />
             </div>
             <div className="col-md-4 mb-3">
@@ -229,9 +242,13 @@ const AddVisitas = () => {
                 onChange={(e) =>
                   setFilters({
                     ...filters,
-                    am_visitante: e.target.value,
+                    am_visitante: e.target.value
+                      .replace(/[^a-zA-ZáéíóúÁÉÍÓÚüÜ\s]/g, "")
+                      .replace(/\b(\w)/g, (match) => match.toUpperCase()),
                   })
                 }
+                readOnly={inputsReadOnly}
+                required
               />
             </div>
           </div>
@@ -241,6 +258,11 @@ const AddVisitas = () => {
               type="button"
               className="btn btn-info"
               onClick={buscarVisitante}
+              disabled={
+                !filters.nombre_visitante ||
+                !filters.ap_visitante ||
+                !filters.am_visitante
+              }
             >
               <FontAwesomeIcon icon={faSearch} /> Buscar visitante
             </button>
@@ -253,7 +275,27 @@ const AddVisitas = () => {
                   ap_visitante: "",
                   am_visitante: "",
                 });
+
+                setVisitanteNuevoData({
+                  ...visitanteNuevoData,
+                  fecha_cumpleanos: "",
+                  calle: "",
+                  numero_interior: "",
+                  numero_exterior: "",
+                  id_colonia: "",
+                  id_municipio: "",
+                  id_estado: "",
+                  id_cp: "",
+                  id_seccion_electoral: "",
+                  correo: "",
+                  numero_celular: "",
+                });
+
+                setAsunto("");
+                setObservaciones("");
+
                 setVisitanteStatus("none");
+                setInputsReadOnly(false);
               }}
             >
               <FontAwesomeIcon icon={faFilterCircleXmark} /> Limpiar
@@ -315,7 +357,7 @@ const AddVisitas = () => {
 
           <div className="card mt-4">
             <div className="card-header">
-              <h5 className="fw-bolder">Agregar visitas</h5>
+              <h5 className="fw-bolder">Agregar visita</h5>
             </div>
             <div className="card-body">
               <InputIdRegistroVisita
@@ -352,8 +394,7 @@ const AddVisitas = () => {
               />
             </div>
             <FechaHoraActual fecha={fecha_visita} hora={hora_visita} />
-            <div className="row">
-              {/*  */}
+            <div className="row was-validated">
               <div className="col-md-8 mb-3">
                 <label
                   htmlFor="calle_visit_new"
@@ -372,6 +413,7 @@ const AddVisitas = () => {
                       calle: e.target.value,
                     })
                   }
+                  required={visitanteStatus === "nuevo"}
                 />
               </div>
               <div className="col-md-2 mb-3">
@@ -392,6 +434,7 @@ const AddVisitas = () => {
                       numero_exterior: e.target.value,
                     })
                   }
+                  required={visitanteStatus === "nuevo"}
                 />
               </div>
               <div className="col-md-2 mb-3">
@@ -414,7 +457,6 @@ const AddVisitas = () => {
                   }
                 />
               </div>
-              {/*  */}
               <div className="col-md-4 mb-3">
                 <label
                   htmlFor="colonia_visit_new"
@@ -432,6 +474,7 @@ const AddVisitas = () => {
                       id_colonia: e.target.value,
                     }))
                   }
+                  required={visitanteStatus === "nuevo"}
                 >
                   <option disabled value="">
                     Seleccione una colonia
@@ -443,7 +486,6 @@ const AddVisitas = () => {
                   ))}
                 </select>
               </div>
-              {/*  */}
               <div className="col-md-4 mb-3">
                 <label
                   htmlFor="municipio_visit_exist"
@@ -461,6 +503,7 @@ const AddVisitas = () => {
                       id_municipio: e.target.value,
                     }))
                   }
+                  required={visitanteStatus === "nuevo"}
                 >
                   <option disabled value="">
                     Seleccione un municipio
@@ -492,6 +535,7 @@ const AddVisitas = () => {
                       id_estado: e.target.value,
                     }))
                   }
+                  required={visitanteStatus === "nuevo"}
                 >
                   <option disabled value="">
                     Seleccione un estado
@@ -520,6 +564,7 @@ const AddVisitas = () => {
                       id_cp: e.target.value,
                     }))
                   }
+                  required={visitanteStatus === "nuevo"}
                 >
                   <option disabled value="">
                     Seleccione un codigo postal
@@ -548,6 +593,7 @@ const AddVisitas = () => {
                       id_seccion_electoral: e.target.value,
                     }))
                   }
+                  required={visitanteStatus === "nuevo"}
                 >
                   <option disabled value="">
                     Seleccione una seccion
@@ -580,6 +626,7 @@ const AddVisitas = () => {
                       numero_celular: e.target.value,
                     })
                   }
+                  required={visitanteStatus === "nuevo"}
                 />
               </div>
               <div className="col-md-3 mb-3">
@@ -600,6 +647,7 @@ const AddVisitas = () => {
                       correo: e.target.value,
                     })
                   }
+                  required={visitanteStatus === "nuevo"}
                 />
               </div>
               <div className="col-md-2 mb-3">
@@ -620,16 +668,16 @@ const AddVisitas = () => {
                       fecha_cumpleanos: e.target.value,
                     })
                   }
+                  required={visitanteStatus === "nuevo"}
                 />
               </div>
-              {/*  */}
-              <TextAreaAsuntoObservaciones
-                asunto={asunto}
-                setAsunto={setAsunto}
-                observaciones={observaciones}
-                setObservaciones={setObservaciones}
-              />
             </div>
+            <TextAreaAsuntoObservaciones
+              asunto={asunto}
+              setAsunto={setAsunto}
+              observaciones={observaciones}
+              setObservaciones={setObservaciones}
+            />
           </div>
         </div>
       )}
