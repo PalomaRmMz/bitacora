@@ -125,7 +125,7 @@ const AddVisitas = () => {
         </div>
         <div className="card-body">
           <div className="input-group mb-3">
-            <span className="input-group-text">ID Recepcionista</span>
+            <span className="input-group-text">id_ecepcionista</span>
             <input
               type="text"
               className="form-control"
@@ -168,21 +168,63 @@ const AddVisitas = () => {
           </div>
 
           <div className="row">
-            {Object.keys(filters).map((key, index) => (
-              <div className="col-md-4 mb-3" key={index}>
-                <label className="form-label fw-bolder fs-7">
-                  {key.replace(/_/g, " ")}
-                </label>
-                <input
-                  type="text"
-                  className="form-control"
-                  value={filters[key]}
-                  onChange={(e) =>
-                    setFilters({ ...filters, [key]: e.target.value })
-                  }
-                />
-              </div>
-            ))}
+            <div className="col-md-4 mb-3">
+              <label
+                htmlFor="nombre_visit_search"
+                className="form-label fw-bolder fs-7"
+              >
+                Nombre
+              </label>
+              <input
+                type="text"
+                id="nombre_visit_search"
+                className="form-control"
+                value={filters.nombre_visitante}
+                onChange={(e) =>
+                  setFilters({ ...filters, nombre_visitante: e.target.value })
+                }
+              />
+            </div>
+            <div className="col-md-4 mb-3">
+              <label
+                htmlFor="ap_visit_search"
+                className="form-label fw-bolder fs-7"
+              >
+                Apellido paterno
+              </label>
+              <input
+                type="text"
+                id="ap_visit_search"
+                className="form-control"
+                value={filters.ap_visitante}
+                onChange={(e) =>
+                  setFilters({
+                    ...filters,
+                    ap_visitante: e.target.value,
+                  })
+                }
+              />
+            </div>
+            <div className="col-md-4 mb-3">
+              <label
+                htmlFor="am_visit_search"
+                className="form-label fw-bolder fs-7"
+              >
+                Apellido materno
+              </label>
+              <input
+                type="text"
+                id="am_visit_search"
+                className="form-control"
+                value={filters.am_visitante}
+                onChange={(e) =>
+                  setFilters({
+                    ...filters,
+                    am_visitante: e.target.value,
+                  })
+                }
+              />
+            </div>
           </div>
 
           <div className="d-flex justify-content-around align-items-center">
@@ -216,6 +258,23 @@ const AddVisitas = () => {
             <h5 className="fw-bolder">Registro de visitas</h5>
           </div>
           <div className="card-body">
+            {filteredVisitas.length > 0 && (
+              <>
+                <div className="input-group mb-3">
+                  <span className="input-group-text">id_visitante</span>
+                  <input
+                    type="text"
+                    className="form-control"
+                    value={filteredVisitas[0].id_visitante || ""}
+                    readOnly
+                  />
+                </div>
+                <span className="fw-bolder">Visitante: </span>
+                {`${filteredVisitas[0].nombre_visitante} ${filteredVisitas[0].ap_visitante} ${filteredVisitas[0].am_visitante}`}
+                <br />
+                <br />
+              </>
+            )}
             <table className="table table-bordered">
               <thead>
                 <tr>
