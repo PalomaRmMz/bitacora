@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faChalkboardUser,
@@ -72,9 +73,12 @@ const AdminVisitas = () => {
         </div>
         <div className="card-body">
           <div className="w-100 text-end mt-2 mb-2">
-            <button type="button" className="btn btn-success text-end">
+            <Link
+              to="/visitas/add_visitas"
+              className="btn btn-success text-end"
+            >
               <FontAwesomeIcon icon={faUserPlus} /> Agregar visita
-            </button>
+            </Link>
           </div>
           <MaterialReactTable table={table} />
         </div>
