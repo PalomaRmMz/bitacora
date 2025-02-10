@@ -3,20 +3,20 @@ import { generateUniqueId } from "./generateUniqueId";
 
 const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
 
-export const CheckIDRegistroVisita = async (id) => {
+export const CheckIDVisitante = async (id) => {
   try {
-    const API_URL = `${API_BASE_URL}/visitas/check/id/${id}`;
+    const API_URL = `${API_BASE_URL}/visitantes/check/id/${id}`;
     const response = await axios.get(API_URL);
     return response.data.exists;
   } catch (error) {
-    console.error("Error al verificar el id_registro_visita", error);
+    console.error("Error al verificar el id_visitante", error);
     return false;
   }
 };
 
-export const generateUniqueRegistroVisitaId = async (visitanteStatus) => {
+export const generateUniqueVisitanteId = async (visitanteStatus) => {
   if (visitanteStatus === "existente" || visitanteStatus === "nuevo") {
-    return generateUniqueId("RV", CheckIDRegistroVisita);
+    return generateUniqueId("DV", CheckIDVisitante);
   } else {
     return null;
   }

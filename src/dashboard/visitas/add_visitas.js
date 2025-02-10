@@ -18,7 +18,8 @@ import {
 import { generateID } from "../../utilities/generateID";
 import { agregarVisita } from "../../services/visitasAdd";
 import { getFilteredVisitas } from "../../services/visitasFilter";
-import { generateUniqueId } from "../../services/checkIDRegistroVisita";
+import { generateUniqueRegistroVisitaId } from "../../services/checkIDRegistroVisita";
+import { generateUniqueVisitanteId } from "../../services/checkIDVisitante";
 import FechaHora from "../../utilities/fechaHora";
 import FechaHoraActual from "../../utilities/fechaHoraActual";
 import InputIdRegistroVisita from "../../utilities/inputIdRegistroVisita";
@@ -58,7 +59,7 @@ const AddVisitas = () => {
   });
 
   const [visitanteNuevoData, setVisitanteNuevoData] = useState({
-    id_visitante: generateID("DV"),
+    id_visitante: generateID("DV") || "",
     nombre: "",
     a_paterno: "",
     a_materno: "",
@@ -178,7 +179,7 @@ const AddVisitas = () => {
   useEffect(() => {
     const obtenerIdUnico = async () => {
       if (visitanteStatus === "existente" || visitanteStatus === "nuevo") {
-        const uniqueId = await generateUniqueId(visitanteStatus);
+        const uniqueId = await generateUniqueRegistroVisitaId(visitanteStatus);
         setVisitanteExistenteData((prevData) => ({
           ...prevData,
           id_registro_visita: uniqueId,
@@ -187,6 +188,19 @@ const AddVisitas = () => {
     };
 
     obtenerIdUnico();
+  }, [visitanteStatus]);
+
+  useEffect(() => {
+    const obtenerIdUnicoVisitante = async () => {
+      if (visitanteStatus === "nuevo") {
+        const uniqueId = await generateUniqueVisitanteId();
+        setVisitanteNuevoData((prevData) => ({
+          ...prevData,
+          id_visitante: uniqueId || prevData.id_visitante,
+        }));
+      }
+    };
+    obtenerIdUnicoVisitante();
   }, [visitanteStatus]);
 
   useEffect(() => {
@@ -504,7 +518,7 @@ const AddVisitas = () => {
                   type="text"
                   id="num_int_visit_new"
                   className="form-control"
-                  value={visitanteNuevoData.numero_interior}
+                  value={visitanteNuevoData.numero_interior || ""}
                   onChange={(e) =>
                     setVisitanteNuevoData({
                       ...visitanteNuevoData,
