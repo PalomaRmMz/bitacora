@@ -18,6 +18,7 @@ import {
 import { generateID } from "../../utilities/generateID";
 import { agregarVisita } from "../../services/visitasAdd";
 import { getFilteredVisitas } from "../../services/visitasFilter";
+import { generateUniqueId } from "../../services/checkIDRegistroVisita";
 import FechaHora from "../../utilities/fechaHora";
 import FechaHoraActual from "../../utilities/fechaHoraActual";
 import InputIdRegistroVisita from "../../utilities/inputIdRegistroVisita";
@@ -46,7 +47,7 @@ const AddVisitas = () => {
   );
   const hora_visita = useMemo(() => new Date().toTimeString().slice(0, 5), []);
 
-  const [visitanteExistenteData] = useState({
+  const [visitanteExistenteData, setVisitanteExistenteData] = useState({
     id_registro_visita: generateID("RV"),
     id_recepcionista: "RU00001",
     fecha_visita,
@@ -175,7 +176,21 @@ const AddVisitas = () => {
   };
 
   useEffect(() => {
-    (async () => {
+    const obtenerIdUnico = async () => {
+      if (visitanteStatus === "existente" || visitanteStatus === "nuevo") {
+        const uniqueId = await generateUniqueId(visitanteStatus);
+        setVisitanteExistenteData((prevData) => ({
+          ...prevData,
+          id_registro_visita: uniqueId,
+        }));
+      }
+    };
+
+    obtenerIdUnico();
+  }, [visitanteStatus]);
+
+  useEffect(() => {
+    const fetchData = async () => {
       try {
         const data = await Promise.all([
           getColonias(),
@@ -195,7 +210,9 @@ const AddVisitas = () => {
       } catch (error) {
         console.error("Error al cargar los datos:", error);
       }
-    })();
+    };
+
+    fetchData();
   }, []);
 
   return (
