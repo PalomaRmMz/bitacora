@@ -15,13 +15,14 @@ import {
   getSecciones,
   getCP,
 } from "../../services/catalogos";
-import { generateID } from "../../utilities/generateID";
+import { removeAccents } from "../../functions/removeAccents ";
 import { agregarVisita } from "../../services/visitasAdd";
 import { getFilteredVisitas } from "../../services/visitasFilter";
 import { generateUniqueRegistroVisitaId } from "../../services/checkIDRegistroVisita";
 import { generateUniqueVisitanteId } from "../../services/checkIDVisitante";
 import FechaHora from "../../utilities/fechaHora";
 import FechaHoraActual from "../../utilities/fechaHoraActual";
+import { generateID } from "../../utilities/generateID";
 import InputIdRegistroVisita from "../../utilities/inputIdRegistroVisita";
 import TextAreaAsuntoObservaciones from "../../utilities/textAreaAsuntoObservaciones";
 
@@ -130,50 +131,36 @@ const AddVisitas = () => {
       JSON.stringify({ visitanteData, visitaData }, null, 2)
     );
 
-    Swal.fire({
-      title: "¡Éxito!",
-      text: "Visita guardada correctamente.",
-      icon: "success",
-      confirmButtonText: "Aceptar",
-      customClass: {
-        confirmButton: "btn btn-success",
-        cancelButton: "btn btn-danger",
-      },
-      buttonsStyling: false,
-    }).then(() => {
-      window.location.href = "/visitas/admin_visitas";
-    });
-
-    // try {
-    //   const respuesta = await agregarVisita(visitanteData, visitaData);
-    //   console.log("Visita agregada exitosamente", respuesta);
-    //   Swal.fire({
-    //     title: "¡Éxito!",
-    //     text: "Visita guardada correctamente.",
-    //     icon: "success",
-    //     confirmButtonText: "Aceptar",
-    //     customClass: {
-    //       confirmButton: "btn btn-success",
-    //       cancelButton: "btn btn-danger",
-    //     },
-    //     buttonsStyling: false,
-    //   }).then(() => {
-    //     window.location.href = "/visitas/admin_visitas";
-    //   });
-    // } catch (error) {
-    //   console.error("Error al agregar la visita", error);
-    //   Swal.fire({
-    //     title: "Error",
-    //     text: "Hubo un problema al guardar la visita. Inténtalo nuevamente.",
-    //     icon: "error",
-    //     confirmButtonText: "Aceptar",
-    //     customClass: {
-    //       confirmButton: "btn btn-success",
-    //       cancelButton: "btn btn-danger",
-    //     },
-    //     buttonsStyling: false,
-    //   });
-    // }
+    try {
+      const respuesta = await agregarVisita(visitanteData, visitaData);
+      console.log("Visita agregada exitosamente", respuesta);
+      Swal.fire({
+        title: "¡Éxito!",
+        text: "Visita guardada correctamente.",
+        icon: "success",
+        confirmButtonText: "Aceptar",
+        customClass: {
+          confirmButton: "btn btn-success",
+          cancelButton: "btn btn-danger",
+        },
+        buttonsStyling: false,
+      }).then(() => {
+        window.location.href = "/visitas/admin_visitas";
+      });
+    } catch (error) {
+      console.error("Error al agregar la visita", error);
+      Swal.fire({
+        title: "Error",
+        text: "Hubo un problema al guardar la visita. Inténtalo nuevamente.",
+        icon: "error",
+        confirmButtonText: "Aceptar",
+        customClass: {
+          confirmButton: "btn btn-success",
+          cancelButton: "btn btn-danger",
+        },
+        buttonsStyling: false,
+      });
+    }
   };
 
   useEffect(() => {
@@ -264,9 +251,11 @@ const AddVisitas = () => {
                 onChange={(e) =>
                   setFilters({
                     ...filters,
-                    nombre_visitante: e.target.value
-                      .replace(/[^a-zA-ZáéíóúÁÉÍÓÚüÜ\s]/g, "")
-                      .replace(/\b(\w)/g, (match) => match.toUpperCase()),
+                    nombre_visitante: removeAccents(
+                      e.target.value
+                        .replace(/[^a-zA-ZáéíóúÁÉÍÓÚüÜ\s]/g, "")
+                        .replace(/\b(\w)/g, (match) => match.toUpperCase())
+                    ),
                   })
                 }
                 readOnly={inputsReadOnly}
@@ -288,9 +277,11 @@ const AddVisitas = () => {
                 onChange={(e) =>
                   setFilters({
                     ...filters,
-                    ap_visitante: e.target.value
-                      .replace(/[^a-zA-ZáéíóúÁÉÍÓÚüÜ\s]/g, "")
-                      .replace(/\b(\w)/g, (match) => match.toUpperCase()),
+                    ap_visitante: removeAccents(
+                      e.target.value
+                        .replace(/[^a-zA-ZáéíóúÁÉÍÓÚüÜ\s]/g, "")
+                        .replace(/\b(\w)/g, (match) => match.toUpperCase())
+                    ),
                   })
                 }
                 readOnly={inputsReadOnly}
@@ -312,9 +303,11 @@ const AddVisitas = () => {
                 onChange={(e) =>
                   setFilters({
                     ...filters,
-                    am_visitante: e.target.value
-                      .replace(/[^a-zA-ZáéíóúÁÉÍÓÚüÜ\s]/g, "")
-                      .replace(/\b(\w)/g, (match) => match.toUpperCase()),
+                    am_visitante: removeAccents(
+                      e.target.value
+                        .replace(/[^a-zA-ZáéíóúÁÉÍÓÚüÜ\s]/g, "")
+                        .replace(/\b(\w)/g, (match) => match.toUpperCase())
+                    ),
                   })
                 }
                 readOnly={inputsReadOnly}
